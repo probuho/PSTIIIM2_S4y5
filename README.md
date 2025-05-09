@@ -7,48 +7,31 @@ Currently, two official plugins are available:
 - [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
 - [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
-## Expanding the ESLint configuration
+# Notes - Collaborators
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+[@Hhazan01](https://github.com/hhazan01)
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+- Instale-configure la librería de Tailwind CSS.
+- Instale-configure la librería de Shadcn e inicialice con la paleta [Slate](https://ui.shadcn.com/colors).
+- Cree un nuevo layout (`src\pages\layout.tsx`) para el Navbar, Main y Footer de la aplicacion a partir del modelo original.
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Components
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+Para la version `0.0.1` se emplean los siguientes componentes:
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
+```json
+# dependencies
+"@radix-ui/react-navigation-menu": "^1.2.12",
+"@radix-ui/react-slot": "^1.2.2",
+"@tailwindcss/vite": "^4.1.6",
+"class-variance-authority": "^0.7.1",
+"clsx": "^2.1.1",
+"lucide-react": "^0.509.0",
+"react-router-dom": "^7.6.0",
+"tailwind-merge": "^3.2.0",
+"tailwindcss": "^4.1.6"
+
+# devDependencies
+"@types/node": "^22.15.17",
+"tw-animate-css": "^1.2.9",
 ```
