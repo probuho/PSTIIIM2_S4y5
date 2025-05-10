@@ -1,8 +1,8 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
-const main = [
+export const main = [
   {
     title: "Inicio",
     url: "/",
@@ -36,19 +36,24 @@ const main = [
 ];
 
 export default function Layout({ children }: { children: React.ReactNode }) {
+  const location = useLocation();
+
   return (
-    <div className="antialiased">
-      <header className="flex gap-4 bg-primary text-white p-5 justify-start items-center">
+    <div className="flex flex-col min-h-screen">
+      <header className="fixed top-0 left-0 right-0 z-50 flex gap-4 bg-primary text-white p-4 justify-start items-center">
         <h1 className="font-semibold text-2xl">Guía del Explorador</h1>
-        <nav className="hidden md:block">
-          {main.map((item, index) => (
-            <Link key={index} to={item.url}>
-              <Button variant={"ghost"}>
-                <span>{item.emoji}</span>
-                {item.title}
+        <nav className="hidden lg:block space-x-2">
+          {main.map((item, index) => {
+            const isActive = location.pathname === item.url;
+            return (
+              <Button variant={isActive ? "secondary" : "ghost"} asChild>
+                <Link key={index} to={item.url}>
+                  <span>{item.emoji}</span>
+                  {item.title}
+                </Link>
               </Button>
-            </Link>
-          ))}
+            );
+          })}
         </nav>
         <div className="ml-auto flex gap-2">
           <Button type="button" variant={"ghost"} size={"sm"}>
@@ -59,8 +64,11 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           </Button>
         </div>
       </header>
-      <main className="bg-sidebar-accent p-5">
-        <div className="bg-white rounded-md border min-h-svh">{children}</div>
+      <div className="h-[100px]" />
+      <main className="flex-1 overflow-y-auto p-5 pt-0 flex justify-center items-start">
+        <div className="w-full md:w-[1050px]">{children}</div>
+      </main>
+      <footer className="border-t py-2">
         <div className="*:[a]:hover:text-primary text-center text-xs text-balance *:[a]:underline *:[a]:underline-offset-4 py-3">
           <p>
             &copy;{new Date().getFullYear()} Guía del Explorador. Todos los
@@ -69,7 +77,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           <a href="https://github.com/hhazan01">@Hhazan01</a>{" "}
           <a href="https://github.com/probuho">@Probuho</a>
         </div>
-      </main>
+      </footer>
     </div>
   );
 }

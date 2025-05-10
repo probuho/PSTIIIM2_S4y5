@@ -1,12 +1,13 @@
 import Layout from "@/pages/layout";
-import { Button } from "@/components/ui/button";
+import { Route, Routes } from "react-router-dom";
+import HomePage from "@/pages/home/home-page";
 
 function App() {
   return (
     <Layout>
-      <div className="flex flex-col items-center justify-center min-h-svh">
-        <Button>Click me</Button>
-      </div>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+      </Routes>
     </Layout>
   );
 }
