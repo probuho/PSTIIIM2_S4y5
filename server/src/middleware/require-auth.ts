@@ -5,12 +5,13 @@ export const requireAuth = (
   req: Request,
   res: Response,
   next: NextFunction
-) => {
+): void => {
   const authHeader = req.header("Authorization");
   const token = authHeader?.split(" ")[1];
 
   if (!token) {
-    return res.status(401).json({ error: "Token no proporcionado" });
+    res.status(401).json({ error: "Token no proporcionado" });
+    return;
   }
 
   try {
@@ -20,6 +21,7 @@ export const requireAuth = (
     }
     return next();
   } catch (error) {
-    return res.status(401).json({ error: "Token inválido o expirado" });
+    res.status(401).json({ error: "Token inválido o expirado" });
+    return;
   }
 };

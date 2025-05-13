@@ -60,8 +60,9 @@ class UserController {
         },
       });
     } catch (error) {
-      console.log(error);
-      res.status(500).json({ error: "Error al registrar usuario" });
+      const message =
+        error instanceof Error ? error.message : "Undefined Error!";
+      res.status(500).json({ error: message });
     }
   }
 
@@ -107,8 +108,36 @@ class UserController {
         },
       });
     } catch (error) {
-      console.log(error);
-      res.status(500).json({ error: "Error al iniciar sesión" });
+      const message =
+        error instanceof Error ? error.message : "Undefined Error!";
+      res.status(500).json({ error: message });
+    }
+  }
+
+  async updateUser(req: Request, res: Response): Promise<void> {
+    try {
+      const userId = req.params.id;
+      const data = req.body;
+
+      const existing = await prisma.user.findUnique({
+        where: { id: userId },
+      });
+
+      if (!existing) {
+        res.status(401).json({ error: "User not found!" });
+        return;
+      }
+
+      await prisma.user.update({
+        where: { id: existing.id },
+        data,
+      });
+
+      res.status(200).json({ message: "Usuario actualizado con exito!" });
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Undefined Error!";
+      res.status(500).json({ error: message });
     }
   }
 }

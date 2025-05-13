@@ -55,6 +55,7 @@ export const SessionProvider = ({
 
   const logOut = () => {
     setSession(null);
+    localStorage.removeItem("auth");
     localStorage.removeItem("refreshToken");
   };
 
