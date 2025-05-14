@@ -2,7 +2,7 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { Link, useLocation } from "react-router-dom";
 import { useSession } from "@/components/context/auth-context";
-import { LogOut } from "lucide-react";
+import NavUser from "@/pages/nav-user";
 
 export const main = [
   {
@@ -39,7 +39,7 @@ export const main = [
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const location = useLocation();
-  const { session, logOut } = useSession();
+  const { session } = useSession();
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -64,14 +64,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         </nav>
         <div className="ml-auto flex gap-2">
           {session?.user ? (
-            <Button
-              type="button"
-              variant={"ghost"}
-              size={"sm"}
-              onClick={logOut}
-            >
-              <LogOut className="h-4 w-4" /> Cerrar Sesión
-            </Button>
+            <NavUser />
           ) : (
             <Button type="button" variant={"ghost"} size={"sm"}>
               <Link to="/login">Comenzar a Explorar</Link>

@@ -1,4 +1,5 @@
 import z from "zod";
+import React from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -20,9 +21,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Link, useNavigate } from "react-router-dom";
-import React from "react";
-import { useSession } from "@/components/context/auth-context";
-import { toast } from "sonner";
+import { useSession, type User } from "@/components/context/auth-context";
 import FormError from "@/components/error-form";
 import axios from "axios";
 
@@ -30,8 +29,6 @@ const LoginSchema = z.object({
   email: z.string().email(),
   password: z.string().min(8),
 });
-
-// const { VITE_BACKEND_URL } = process.env;
 
 export function LoginForm({
   className,
@@ -43,13 +40,18 @@ export function LoginForm({
   const navigate = useNavigate();
 
   React.useEffect(() => {
+    setTimeout(() => {
+      setError(undefined);
+    }, 2000);
+  }, [error]);
+
+  React.useEffect(() => {
     const authData = localStorage.getItem("auth");
     if (authData) {
       navigate("/");
     }
   }, [navigate]);
 
-  //Verificacion de si ya se ha iniciado sesion, de ser el caso es redirigido
   React.useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
@@ -73,20 +75,18 @@ export function LoginForm({
           password: values.password,
         });
 
-        if (response.status === 200) {
-          const data = response.data as {
-            user: any;
-            accessToken: string;
-            refreshToken: string;
-          };
-          signIn(data.user, data.accessToken, data.refreshToken);
-          navigate("/");
-        } else {
-          const data = response.data as { error: string };
-          setError(data.error);
-        }
-      } catch (error) {
-        toast.error(error as string);
+        const data = response.data as {
+          user: User;
+          accessToken: string;
+          refreshToken: string;
+        };
+        signIn(data.user, data.accessToken, data.refreshToken);
+        navigate("/");
+      } catch (error: any) {
+        const message = error.response
+          ? error.response.data.error
+          : error.message;
+        setError(message);
       }
     });
   };

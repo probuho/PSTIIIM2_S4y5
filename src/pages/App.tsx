@@ -4,6 +4,7 @@ import HomePage from "@/pages/home/home-page";
 import LoginPage from "./login/login-page";
 import { SessionProvider } from "@/components/context/auth-context";
 import RegisterPage from "./register/register-page";
+import CommunityPage from "./community/community-page";
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
+          <Route path="/community" element={<CommunityPage />} />
         </Routes>
       </Layout>
     </SessionProvider>

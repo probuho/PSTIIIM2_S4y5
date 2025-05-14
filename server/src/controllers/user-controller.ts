@@ -102,7 +102,7 @@ class UserController {
         refreshToken,
         user: {
           id: user.id,
-          nombre: user.name,
+          name: user.name,
           nickname: user.nickname,
           email: user.email,
         },
@@ -138,6 +138,23 @@ class UserController {
       const message =
         error instanceof Error ? error.message : "Undefined Error!";
       res.status(500).json({ error: message });
+    }
+  }
+
+  async refreshToken(req: Request, res: Response): Promise<void> {
+    const authHeader = req.headers.authorization;
+    const token = authHeader?.split(" ")[1];
+
+    if (!token) {
+      res.status(401).json({ error: "Token requerido" });
+      return;
+    }
+
+    try {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET as string);
+      res.status(200).json({ valid: true, decoded });
+    } catch (error) {
+      res.status(401).json({ valid: false, error: "Token inválido" });
     }
   }
 }
