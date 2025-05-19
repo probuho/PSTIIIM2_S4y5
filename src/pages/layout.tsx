@@ -1,6 +1,7 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Link, useLocation } from "react-router-dom";
+import { DynamicBreadcrumb } from "@/components/utils/dynamic-breadcrumb";
 
 export const main = [
   {
@@ -66,7 +67,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       </header>
       <div className="h-[100px]" />
       <main className="flex-1 overflow-y-auto p-5 pt-0 flex justify-center items-start">
-        <div className="w-full md:w-[1050px]">{children}</div>
+        <div className="w-full md:w-[1050px] space-y-5">
+          <DynamicBreadcrumb />
+          {children}
+        </div>
       </main>
       <footer className="border-t py-2">
         <div className="*:[a]:hover:text-primary text-center text-xs text-balance *:[a]:underline *:[a]:underline-offset-4 py-3">

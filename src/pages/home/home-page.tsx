@@ -18,7 +18,7 @@ export default function HomePage() {
 
   return (
     <div className="flex flex-col gap-5">
-      <div className="flex flex-col justify-center items-center gap-4">
+      <div className="flex flex-col justify-center items-center gap-4 p-10">
         <h1 className="text-4xl font-semibold">Guía del Explorador</h1>
         <h2 className="text-muted-foreground">Explora, Aprende y Conserva</h2>
         <Button type="button" asChild>
@@ -45,7 +45,7 @@ export default function HomePage() {
         <Label className="text-2xl font-bold">Módulos Destacados</Label>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
           {modules.map((item) => (
-            <Card key={item.id}>
+            <Card key={item.id} className="bg-sidebar">
               <CardHeader>
                 <span className="text-4xl">{item.icon}</span>
                 {item.title}
@@ -67,19 +67,14 @@ export default function HomePage() {
         <div className="">
           {contributions.map((item) => (
             <React.Fragment key={item.id}>
-              <div className="flex items-center mb-4 rounded-md border p-2">
-                <Avatar className="w-12 h-12 mr-3">
+              <div className="flex items-center mb-4 border-b p-1">
+                <Avatar className="w-12 h-12 mr-3 rounded-lg">
                   <AvatarImage src={item.avatar} alt={item.author} />
                   <AvatarFallback>CN</AvatarFallback>
                 </Avatar>
-                <div className="flex flex-col w-full bg-white p-1 gap-3">
-                  <div className="flex items-center gap-2">
-                    <p className="font-semibold text-sm">Por {item.author}</p>
-                    <span className="ml-auto text-xs text-zinc-400">
-                      {item.timeAgo}
-                    </span>
-                  </div>
-                  <p className="text-gray-700">{item.title}</p>
+                <div className="grid flex-1 text-left text-md leading-tight">
+                  <span className="truncate font-medium">{item.author}</span>
+                  <span className="truncate text-xs">{item.title}</span>
                 </div>
               </div>
             </React.Fragment>
@@ -90,7 +85,7 @@ export default function HomePage() {
         <Label className="text-2xl font-bold">Estadísticas Ambientales</Label>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
           {stats.map((item) => (
-            <Card key={item.id}>
+            <Card key={item.id} className="bg-sidebar">
               <CardHeader className="flex flex-col items-center justify-center gap-4">
                 <CardTitle className="text-3xl">{item.icon}</CardTitle>
                 <span className="text-violet-500 font-semibold text-5xl">
