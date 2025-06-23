@@ -1,7 +1,12 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Link, useLocation } from "react-router-dom";
+<<<<<<< HEAD
 import { DynamicBreadcrumb } from "@/components/utils/dynamic-breadcrumb";
+=======
+import { useSession } from "@/components/context/auth-context";
+import NavUser from "@/pages/nav-user";
+>>>>>>> authentication
 
 export const main = [
   {
@@ -38,6 +43,7 @@ export const main = [
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const location = useLocation();
+  const { session } = useSession();
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -47,8 +53,12 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           {main.map((item, index) => {
             const isActive = location.pathname === item.url;
             return (
-              <Button variant={isActive ? "secondary" : "ghost"} asChild>
-                <Link key={index} to={item.url}>
+              <Button
+                key={index}
+                variant={isActive ? "secondary" : "ghost"}
+                asChild
+              >
+                <Link to={item.url}>
                   <span>{item.emoji}</span>
                   {item.title}
                 </Link>
@@ -57,12 +67,13 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           })}
         </nav>
         <div className="ml-auto flex gap-2">
-          <Button type="button" variant={"ghost"} size={"sm"}>
-            <Link to="#">Mi Perfil</Link>
-          </Button>
-          <Button type="button" variant={"ghost"} size={"sm"}>
-            <Link to="#">Comenzar a Explorar</Link>
-          </Button>
+          {session?.user ? (
+            <NavUser />
+          ) : (
+            <Button type="button" variant={"ghost"} size={"sm"}>
+              <Link to="/login">Comenzar a Explorar</Link>
+            </Button>
+          )}
         </div>
       </header>
       <div className="h-[100px]" />
