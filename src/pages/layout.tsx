@@ -1,45 +1,10 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Link, useLocation } from "react-router-dom";
-<<<<<<< HEAD
 import { DynamicBreadcrumb } from "@/components/utils/dynamic-breadcrumb";
-=======
 import { useSession } from "@/components/context/auth-context";
-import NavUser from "@/pages/nav-user";
->>>>>>> authentication
-
-export const main = [
-  {
-    title: "Inicio",
-    url: "/",
-    emoji: "🏠",
-  },
-  {
-    title: "Juegos",
-    url: "/games",
-    emoji: "🎮",
-  },
-  {
-    title: "Rutas",
-    url: "/routes",
-    emoji: "🥾",
-  },
-  {
-    title: "Avistamientos",
-    url: "/sightings",
-    emoji: "👁️",
-  },
-  {
-    title: "Comunidad",
-    url: "/community",
-    emoji: "👥",
-  },
-  {
-    title: "Especies",
-    url: "/especies",
-    emoji: "🦋",
-  },
-];
+import NavUser from "./nav-user";
+import { main } from "./main-menu";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const location = useLocation();
