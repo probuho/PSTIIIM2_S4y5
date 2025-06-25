@@ -15,17 +15,27 @@ datasource db {
 }
 
 model User {
-  id                 String    @id @default(auto()) @map("_id") @db.ObjectId
+  id                 String               @id @default(auto()) @map("_id") @db.ObjectId
   name               String
-  nickname           String    @unique
-  email              String    @unique
-  emailVerified      DateTime? @map("email_verified")
-  image              String    @default("/Logo.jpg")
+  nickname           String               @unique
+  email              String               @unique
+  emailVerified      DateTime?            @map("email_verified")
+  image              String               @default("/Logo.jpg")
   password           String?
-  status             String    @default("A")
-  createdAt          DateTime  @default(now())
-  updatedAt          DateTime  @updatedAt
-  isTwoFactorEnabled Boolean   @default(false)
+  status             String               @default("A")
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
+  isTwoFactorEnabled Boolean              @default(false)
+  nivel              Int                  @default(1)
+  puntos             Int                  @default(0)
+  avatarUrl          String               @default("/avatars/default.png")
+  logros             UsuarioLogro[]
+  comunidades        ComunidadUsuario[]
+  aportes            Tema[]               @relation("Aportes")
+  replicas           Respuesta[]          @relation("Respuestas")
+  guardados          Guardado[]
+  actividad          Actividad[]
+  preferencias       PreferenciasUsuario?
 
   @@map("users")
 }
@@ -62,4 +72,100 @@ model TwoFactorConfirmation {
   userId String
 
   @@unique([userId])
+}
+
+model Logro {
+  id          String         @id @default(auto()) @map("_id") @db.ObjectId
+  nombre      String
+  descripcion String
+  nivel       Int // Nivel requerido para el logro
+  icono       String // URL o nombre del icono
+  tareas      Tarea[] // Tareas asociadas a este logro
+  usuarios    UsuarioLogro[]
+}
+
+model UsuarioLogro {
+  id               String  @id @default(auto()) @map("_id") @db.ObjectId
+  user             User    @relation(fields: [userId], references: [id])
+  userId           String  @db.ObjectId
+  logro            Logro   @relation(fields: [logroId], references: [id])
+  logroId          String  @db.ObjectId
+  progreso         Int // Porcentaje de progreso (0-100)
+  mostrarAlPublico Boolean @default(true)
+}
+
+model Tarea {
+  id          String  @id @default(auto()) @map("_id") @db.ObjectId
+  descripcion String
+  dificultad  Int // 1-100
+  modulo      String // "juegos", "rutas", "avistamientos", etc.
+  logro       Logro?  @relation(fields: [logroId], references: [id])
+  logroId     String? @db.ObjectId
+}
+
+model Comunidad {
+  id          String             @id @default(auto()) @map("_id") @db.ObjectId
+  nombre      String
+  descripcion String
+  miembros    ComunidadUsuario[]
+  temas       Tema[]
+}
+
+model ComunidadUsuario {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  user        User      @relation(fields: [userId], references: [id])
+  userId      String    @db.ObjectId
+  comunidad   Comunidad @relation(fields: [comunidadId], references: [id])
+  comunidadId String    @db.ObjectId
+  rol         String // "Miembro", "Moderador", "Admin"
+}
+
+model Tema {
+  id          String      @id @default(auto()) @map("_id") @db.ObjectId
+  titulo      String
+  contenido   String
+  fecha       DateTime    @default(now())
+  autor       User        @relation("Aportes", fields: [autorId], references: [id])
+  autorId     String      @db.ObjectId
+  comunidad   Comunidad   @relation(fields: [comunidadId], references: [id])
+  comunidadId String      @db.ObjectId
+  respuestas  Respuesta[]
+  likes       Int         @default(0)
+}
+
+model Respuesta {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  contenido String
+  fecha     DateTime @default(now())
+  autor     User     @relation("Respuestas", fields: [autorId], references: [id])
+  autorId   String   @db.ObjectId
+  tema      Tema     @relation(fields: [temaId], references: [id])
+  temaId    String   @db.ObjectId
+}
+
+model Guardado {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  user         User     @relation(fields: [userId], references: [id])
+  userId       String   @db.ObjectId
+  tipo         String // "tema", "respuesta", "juego", etc.
+  referenciaId String
+  fecha        DateTime @default(now())
+}
+
+model Actividad {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  user        User     @relation(fields: [userId], references: [id])
+  userId      String   @db.ObjectId
+  tipo        String // "aporte", "replica", "juego", etc.
+  descripcion String
+  fecha       DateTime @default(now())
+}
+
+model PreferenciasUsuario {
+  id             String  @id @default(auto()) @map("_id") @db.ObjectId
+  user           User    @relation(fields: [userId], references: [id])
+  userId         String  @unique @db.ObjectId
+  mostrarLogros  Boolean @default(true)
+  notificaciones Boolean @default(true)
+  idioma         String  @default("es")
 }

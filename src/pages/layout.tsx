@@ -35,15 +35,20 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           {session?.user ? (
             <NavUser />
           ) : (
-            <Button type="button" variant={"ghost"} size={"sm"}>
-              <Link to="/login">Comenzar a Explorar</Link>
-            </Button>
+            <>
+              <Button type="button" variant={"ghost"} size={"sm"}>
+                <Link to="/login">Comenzar a Explorar</Link>
+              </Button>
+              <Button type="button" variant={"secondary"} size={"sm"}>
+                <Link to="/login">Iniciar sesión</Link>
+              </Button>
+            </>
           )}
         </div>
       </header>
-      <div className="h-[100px]" />
-      <main className="flex-1 overflow-y-auto p-5 pt-0 flex justify-center items-start">
-        <div className="w-full md:w-[1050px] space-y-5">
+      <div className="h-[90px]" />
+      <main className="flex-1 overflow-y-auto p-2 pt-0 flex justify-center items-start">
+        <div className="w-full md:w-[1050px]">
           <DynamicBreadcrumb />
           {children}
         </div>

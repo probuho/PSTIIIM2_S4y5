@@ -19,13 +19,13 @@
     "@types/jsonwebtoken": "^9.0.9",
     "@types/morgan": "^1.9.9",
     "@types/node": "^22.15.17",
-    "prisma": "^6.7.0",
+    "prisma": "^6.10.1",
     "ts-node": "^10.9.2",
     "tsx": "^4.19.4",
     "typescript": "^5.8.3"
   },
   "dependencies": {
-    "@prisma/client": "^6.7.0",
+    "@prisma/client": "^6.10.1",
     "bcryptjs": "^3.0.2",
     "body-parser": "^2.2.0",
     "concurrently": "^9.1.2",

@@ -29,7 +29,7 @@ export default function GamePage() {
         <TabsList className="w-[400px] sm:grid sm:grid-cols-4 gap-2">
           <TabsTrigger value="featured">Disponible</TabsTrigger>
           <TabsTrigger value="new">Nuevos</TabsTrigger>
-          <TabsTrigger value="popular">Popular</TabsTrigger>
+          <TabsTrigger value="popular">Populares</TabsTrigger>
           <TabsTrigger value="myGames">Mis juegos</TabsTrigger>
         </TabsList>
         <Separator />
@@ -45,10 +45,10 @@ export default function GamePage() {
                   <CardDescription>{item.description}</CardDescription>
                   <div className="mt-auto space-x-4">
                     <Button type="button" asChild>
-                      <Link to={item.link}>Play now</Link>
+                      <Link to={item.link}>Jugar ahora</Link>
                     </Button>
                     <Button type="button" variant="secondary">
-                      Deatils
+                      Detalles
                     </Button>
                   </div>
                 </CardContent>
@@ -67,17 +67,17 @@ export default function GamePage() {
         </TabsContent>
       </Tabs>
       <div className="grid gap-4 p-3">
-        <Label className="text-2xl">Wildlife Memory Puzzle</Label>
+        <Label className="text-2xl">Juego de Memoria de Vida Silvestre</Label>
         <span className="text-sm text-muted-foreground">
-          Match pairs of cards featuring endangared species to test your memory
-          and learn about wildlife conservation.
+          Empareja pares de cartas con especies en peligro para poner a prueba tu memoria
+          y aprender sobre la conservación de la vida silvestre.
         </span>
       </div>
       <Tabs defaultValue="easy">
         <TabsList className="w-[400px] ms:grid sm:grid-cols-3 gap-2">
-          <TabsTrigger value="easy">Easy 4x4</TabsTrigger>
-          <TabsTrigger value="medium">Medium 6x6</TabsTrigger>
-          <TabsTrigger value="hard">Hard 8x8</TabsTrigger>
+          <TabsTrigger value="easy">Fácil 4x4</TabsTrigger>
+          <TabsTrigger value="medium">Medio 6x6</TabsTrigger>
+          <TabsTrigger value="hard">Difícil 8x8</TabsTrigger>
         </TabsList>
         <Separator />
         <TabsContent value="easy">
@@ -86,13 +86,13 @@ export default function GamePage() {
               <Card key={index} className="bg-sidebar">
                 <CardHeader>
                   <span className="text-3xl">{item.icon}</span>
-                  <span className="text-muted-foreground">{item.subTitle}</span>
+                  <span className="text-muted-foreground">{item.subTitle === 'Game Rules' ? 'Reglas del juego' : item.subTitle === 'Your stats' ? 'Tus estadísticas' : item.subTitle}</span>
                 </CardHeader>
                 <CardContent className="flex flex-1 flex-col gap-4">
-                  <CardTitle>{item.title}</CardTitle>
-                  <CardDescription>{item.description}</CardDescription>
+                  <CardTitle>{item.title === 'How To Play' ? 'Cómo jugar' : item.title === 'Game Progress' ? 'Progreso del juego' : item.title}</CardTitle>
+                  <CardDescription>{item.description.replace('Flip cards to find matching pairs. Learn about cach each species when you make a match.\nComplete the board as quickly as possible.', 'Voltea cartas para encontrar pares. Aprende sobre cada especie cuando hagas un match.\nCompleta el tablero lo más rápido posible.').replace('Best Time: 2:45 min | Species identified: 18/30 | Current streak: 3 games', 'Mejor tiempo: 2:45 min | Especies identificadas: 18/30 | Racha actual: 3 juegos')}</CardDescription>
                   <div className="mt-auto space-x-4">
-                    <Button type="button">Start Game</Button>
+                    <Button type="button">Iniciar juego</Button>
                     <Button type="button" variant="secondary">
                       Tutorial
                     </Button>
@@ -110,7 +110,7 @@ export default function GamePage() {
         </TabsContent>
       </Tabs>
       <div className="">
-        <Label className="text-2xl p-3">Featured Species</Label>
+        <Label className="text-2xl p-3">Especies destacadas</Label>
         {featuredSpecies.map((item, index) => (
           <React.Fragment key={index}>
             <div className="flex items-center mb-4 border-b p-1">

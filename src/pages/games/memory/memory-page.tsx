@@ -12,6 +12,8 @@ import carta8 from "@/assets/cartas/carta_8.webp";
 import carta9 from "@/assets/cartas/carta_9.webp";
 import carta10 from "@/assets/cartas/carta_10.webp";
 import reverse from "@/assets/cartas/carta_reverso.webp";
+import { useSession } from "@/components/context/auth-context";
+import { toast } from "sonner";
 
 type CardType = {
   id: number;
@@ -33,13 +35,25 @@ const symbols = [
 ];
 
 export default function MemoryPage() {
+  const { session } = useSession();
   const [cards, setCards] = React.useState<CardType[]>([]);
   const [selected, setSelected] = React.useState<CardType[]>([]);
   const [disabled, setDisabled] = React.useState(false);
+  const [matches, setMatches] = React.useState(0);
 
   React.useEffect(() => {
     shuffleCards();
   }, []);
+
+  React.useEffect(() => {
+    if (matches === symbols.length) {
+      toast.success("¡Felicidades! Has completado el juego de memoria.");
+      if (session?.user) {
+        // Aquí iría la lógica para guardar la puntuación, por ejemplo:
+        // await axios.post('http://localhost:3001/score', { userId: session.user.id, score: ... })
+      }
+    }
+  }, [matches, session]);
 
   const shuffleCards = () => {
     const duplicated = [...symbols, ...symbols];
@@ -53,6 +67,7 @@ export default function MemoryPage() {
 
     setCards(shuffled);
     setSelected([]);
+    setMatches(0);
   };
 
   const handleClick = (card: CardType) => {
@@ -70,6 +85,7 @@ export default function MemoryPage() {
               c.symbol === first.symbol ? { ...c, matched: true } : c
             )
           );
+          setMatches((prev) => prev + 1);
         }
         setSelected([]);
         setDisabled(false);
@@ -80,7 +96,7 @@ export default function MemoryPage() {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex justify-between items-start">
-        <Label className="text-2xl">Wildlife Memory Puzzle</Label>
+        <Label className="text-2xl">Juego de Memoria de Vida Silvestre</Label>
         <Button onClick={shuffleCards}>Reiniciar</Button>
       </div>
       <div className="grid grid-cols-4 gap-4 flex-1">

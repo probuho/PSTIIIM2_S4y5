@@ -1,6 +1,6 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { main } from "@/pages/layout";
+import { main } from "@/pages/main-menu";
 import { Link, useLocation } from "react-router-dom";
 import { Label } from "@/components/ui/label";
 import {
