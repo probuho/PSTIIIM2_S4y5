@@ -7,10 +7,6 @@ import RegisterPage from "./register/register-page";
 import CommunityPage from "./community/community-page";
 import GamePage from "./games/game-page";
 import ProfilePage from "./profile/profile-page";
-import SightingsPage from "./sightings/sightings-page";
-import SightingDetail from "./sightings/sighting-detail";
-import MemoryPage from "./games/memory/memory-page";
-import RoutesPage from "./routes/routes-page";
 
 function App() {
   return (
@@ -22,10 +18,8 @@ function App() {
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/community" element={<CommunityPage />} />
           <Route path="/games" element={<GamePage />} />
-          <Route path="/games/memory" element={<MemoryPage />} />
-          <Route path="/routes" element={<RoutesPage />} />
-          <Route path="/sightings" element={<SightingsPage />} />
-          <Route path="/sightings/:id" element={<SightingDetail />} />
+          <Route path="/routes" element={<div className="text-center p-10"><h1 className="text-2xl font-bold">Rutas</h1><p className="text-muted-foreground">Página en construcción</p></div>} />
+          <Route path="/sightings" element={<div className="text-center p-10"><h1 className="text-2xl font-bold">Avistamientos</h1><p className="text-muted-foreground">Página en construcción</p></div>} />
           <Route path="/especies" element={<div className="text-center p-10"><h1 className="text-2xl font-bold">Especies</h1><p className="text-muted-foreground">Página en construcción</p></div>} />
           <Route path="/profile" element={<ProfilePage />} />
         </Routes>

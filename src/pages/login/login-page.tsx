@@ -1,84 +1,20 @@
-import { User, AtSign, Mail, Lock } from "lucide-react";
+import { LoginForm } from "./login-form";
+import { Link } from "react-router-dom";
 
 export default function LoginPage() {
-  const container = document.querySelector(".container");
-  const registerBtn = document.querySelector(".register-btn");
-  const loginBtn = document.querySelector(".login-btn");
-
-  registerBtn?.addEventListener("click", () => {
-    container?.classList.add("active");
-  });
-
-  loginBtn?.addEventListener("click", () => {
-    container?.classList.remove("active");
-  });
-
   return (
-    <div className="container">
-      <div className="form-box login">
-        <form action="#">
-          <h1>Iniciar sesión</h1>
-          <div className="input-box">
-            <input type="text" placeholder="Usuario" required />
-            <i className="bx bxs-user"></i>
-          </div>
-          <div className="input-box">
-            <input type="password" placeholder="Contraseña" required />
-            <i className="bx bxs-lock-alt"></i>
-          </div>
-          <div className="forgot-link">
-            <a href="#">¿Olvidaste tu contraseña?</a>
-          </div>
-          <button type="submit" className="btn">
-            Entrar
-          </button>
-        </form>
-      </div>
-
-      <div className="form-box register">
-        <form action="#">
-          <h1>Registro</h1>
-          <div className="input-box relative">
-            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
-              <User size={20} />
-            </span>
-            <input type="text" placeholder="Usuario" required className="pl-14" />
-          </div>
-          <div className="input-box relative">
-            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
-              <AtSign size={20} />
-            </span>
-            <input type="text" placeholder="Nickname" required className="pl-14" />
-          </div>
-          <div className="input-box relative">
-            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
-              <Mail size={20} />
-            </span>
-            <input type="email" placeholder="Correo electrónico" required className="pl-14" />
-          </div>
-          <div className="input-box relative">
-            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
-              <Lock size={20} />
-            </span>
-            <input type="password" placeholder="Contraseña" required className="pl-14" />
-          </div>
-          <button type="submit" className="btn">
-            Registrarse
-          </button>
-        </form>
-      </div>
-
-      <div className="toggle-box">
-        <div className="toggle-panel toggle-left">
-          <h1>¡Hola, bienvenido!</h1>
-          <p>¿No tienes una cuenta?</p>
-          <button className="btn register-btn">Registrarse</button>
+    <div className="min-h-screen flex items-center justify-center bg-white pt-0">
+      <div className="w-full max-w-[98vw] h-[600px] bg-white rounded-3xl shadow-2xl flex overflow-hidden mx-0">
+        {/* Panel izquierdo: Bienvenida */}
+        <div className="w-1/2 flex flex-col justify-center items-center bg-[#7da6fa] rounded-l-3xl text-white p-3">
+          <h2 className="text-3xl font-extrabold mb-2 text-center">¡Hola, Bienvenido!</h2>
+          <p className="mb-8 text-lg text-center">¿No tienes una cuenta?</p>
+          <Link to="/register" className="border-2 border-white rounded-lg px-8 py-2 font-semibold hover:bg-white hover:text-blue-500 transition-colors">Registrarse</Link>
         </div>
-
-        <div className="toggle-panel toggle-right">
-          <h1>¡Bienvenido de nuevo!</h1>
-          <p>¿Ya tienes una cuenta?</p>
-          <button className="btn login-btn">Entrar</button>
+        {/* Panel derecho: Formulario */}
+        <div className="w-1/2 flex flex-col justify-center px-2 py-2">
+          <h2 className="text-4xl font-extrabold mb-6 text-gray-800">Iniciar sesión</h2>
+          <LoginForm />
         </div>
       </div>
     </div>

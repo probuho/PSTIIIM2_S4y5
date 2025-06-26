@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 export default function RegisterPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-white pt-0">
-      <div className="w-full max-w-[98vw] min-h-[600px] bg-white rounded-3xl shadow-2xl flex overflow-hidden mx-0">
+      <div className="w-full max-w-[98vw] h-[600px] bg-white rounded-3xl shadow-2xl flex overflow-hidden mx-0">
         {/* Panel izquierdo: Formulario */}
         <div className="w-1/2 flex flex-col justify-center px-2 py-2">
           <h2 className="text-4xl font-extrabold mb-6 text-gray-800">Registro</h2>

@@ -169,12 +169,3 @@ model PreferenciasUsuario {
   notificaciones Boolean @default(true)
   idioma         String  @default("es")
 }
-
-model GameScore {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  userId    String?  // Puede ser null si es anónimo/no autenticado
-  userName  String   // Nickname, nombre o "Anónimo"
-  game      String
-  score     Int
-  date      DateTime @default(now())
-}

@@ -1,195 +1,130 @@
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { easyMemory, featuredSpecies, games } from "./data";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import React from "react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Link } from "react-router-dom";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
-import { games } from "./data";
-import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
-import { useSession } from "@/components/context/auth-context";
-import { Trophy, Medal, Crown, User } from 'lucide-react';
-import { useTopScores } from "@/hooks/useTopScores";
-
-// Contenido de los modales para cada juego
-const gameDetails: Record<string, { descripcion: string; tutorial: string[]; reglas: string[] }> = {
-  "eco-explorer": {
-    descripcion: "Responde preguntas y supera retos para convertirte en un verdadero explorador ecológico. Aprende sobre el medio ambiente y la conservación mientras avanzas por diferentes niveles.",
-    tutorial: [
-      "Lee atentamente cada pregunta o reto.",
-      "Selecciona la respuesta correcta o realiza la acción indicada.",
-      "Avanza de nivel al acertar y aprende datos curiosos sobre la naturaleza.",
-      "Intenta obtener la mayor puntuación posible."
-    ],
-    reglas: [
-      "Tienes un tiempo límite para responder cada pregunta.",
-      "Cada respuesta correcta suma puntos, las incorrectas no restan.",
-      "Al finalizar, podrás ver tu puntuación y aprender más sobre los temas tratados."
-    ]
-  },
-  "memoria": {
-    descripcion: "Pon a prueba tu memoria emparejando cartas de especies en peligro de extinción. Aprende sobre la biodiversidad mientras te diviertes.",
-    tutorial: [
-      "Haz clic en dos cartas para voltearlas.",
-      "Si las cartas coinciden, permanecerán descubiertas.",
-      "Si no coinciden, se volverán a ocultar.",
-      "Completa el tablero en el menor tiempo y con la menor cantidad de movimientos posible."
-    ],
-    reglas: [
-      "Solo puedes voltear dos cartas a la vez.",
-      "El juego termina cuando todas las parejas han sido encontradas.",
-      "Tu puntuación depende del tiempo y los movimientos realizados."
-    ]
-  },
-  "species-identification": {
-    descripcion: "Pon a prueba tu capacidad para identificar diferentes especies de plantas y animales. Aprende a reconocerlas y conoce datos interesantes sobre cada una.",
-    tutorial: [
-      "Observa la imagen o descripción de la especie.",
-      "Selecciona el nombre correcto entre varias opciones.",
-      "Recibe retroalimentación inmediata y aprende sobre cada especie.",
-      "Intenta identificar la mayor cantidad posible en el menor tiempo."
-    ],
-    reglas: [
-      "Cada respuesta correcta suma puntos.",
-      "No hay penalización por errores, ¡anímate a intentarlo!",
-      "Al final, podrás revisar tus aciertos y aprender más sobre las especies."
-    ]
-  },
-  "conservation-simulation": {
-    descripcion: "Simula la gestión de un ecosistema y toma decisiones para proteger la biodiversidad. Descubre cómo tus acciones afectan el equilibrio natural.",
-    tutorial: [
-      "Elige un ecosistema para gestionar.",
-      "Toma decisiones sobre conservación, recursos y especies.",
-      "Observa cómo tus elecciones afectan el ecosistema en tiempo real.",
-      "Aprende sobre el impacto de la conservación y la sostenibilidad."
-    ],
-    reglas: [
-      "Cada decisión tiene consecuencias positivas o negativas.",
-      "El objetivo es mantener el equilibrio y la salud del ecosistema.",
-      "Puedes reiniciar la simulación y probar diferentes estrategias."
-    ]
-  }
-};
 
 export default function GamePage() {
-  // Estado para controlar qué modal está abierto
-  const [openModal, setOpenModal] = React.useState<string | null>(null);
-  const { session } = useSession();
-  // Estado para el juego seleccionado en el top (por defecto "Memoria")
-  const [selectedGame, setSelectedGame] = React.useState("Memoria");
-  const { scores, loading } = useTopScores(selectedGame, 5);
-
   return (
-    <div className="flex flex-col gap-8 p-6 max-w-5xl mx-auto">
-      {/* Encabezado principal */}
-      <div className="grid gap-4">
+    <div className="flex flex-col gap-5">
+      <div className="grid gap-4 p-5">
         <Label className="text-4xl">Juegos Educativos</Label>
         <span className="text-sm text-muted-foreground">
-          Explora nuestra colección de juegos interactivos diseñados para educar y entretener sobre conservación ambiental y vida silvestre.
+          Explora nuestra colección de juegos interactivos diseñados para educar
+          y entretener a los jugadores sobre conservación ambiental, protección
+          de la vida silvestre y prácticas sostenibles.
         </span>
       </div>
-      {/* Cards de juegos */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mt-4">
-        {games.map((item) => (
-          <Card key={item.id} className="bg-sidebar flex flex-col justify-between h-full min-h-[320px] p-2">
-            <CardHeader className="pb-2">
-              <span className="text-3xl">{item.icon}</span>
-            </CardHeader>
-            <CardContent className="flex flex-1 flex-col gap-4">
-              <CardTitle className="text-lg">{item.title}</CardTitle>
-              <CardDescription className="text-sm">{item.description}</CardDescription>
-              <div className="mt-auto flex flex-col gap-2">
-                <Button asChild className="w-full">
-                  <Link to={item.link}>Jugar ahora</Link>
-                </Button>
-                <Button variant="secondary" className="w-full" onClick={() => setOpenModal(item.id)}>
-                  Detalles
-                </Button>
+      <Tabs defaultValue="featured">
+        <TabsList className="w-[400px] sm:grid sm:grid-cols-4 gap-2">
+          <TabsTrigger value="featured">Disponible</TabsTrigger>
+          <TabsTrigger value="new">Nuevos</TabsTrigger>
+          <TabsTrigger value="popular">Populares</TabsTrigger>
+          <TabsTrigger value="myGames">Mis juegos</TabsTrigger>
+        </TabsList>
+        <Separator />
+        <TabsContent value="featured">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 p-4">
+            {games.map((item) => (
+              <Card key={item.id} className="bg-sidebar">
+                <CardHeader>
+                  <span className="text-2xl">{item.icon}</span>
+                </CardHeader>
+                <CardContent className="flex flex-1 flex-col gap-4">
+                  <CardTitle>{item.title}</CardTitle>
+                  <CardDescription>{item.description}</CardDescription>
+                  <div className="mt-auto space-x-4">
+                    <Button type="button" asChild>
+                      <Link to={item.link}>Jugar ahora</Link>
+                    </Button>
+                    <Button type="button" variant="secondary">
+                      Detalles
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </TabsContent>
+        <TabsContent value="new" className="p-4">
+          <div className="flex-1 h-70 rounded-lg border-2 border-dashed" />
+        </TabsContent>
+        <TabsContent value="popular" className="p-4">
+          <div className="flex-1 h-70 rounded-lg border-2 border-dashed" />
+        </TabsContent>
+        <TabsContent value="myGames" className="p-4">
+          <div className="flex-1 h-70 rounded-lg border-2 border-dashed" />
+        </TabsContent>
+      </Tabs>
+      <div className="grid gap-4 p-3">
+        <Label className="text-2xl">Juego de Memoria de Vida Silvestre</Label>
+        <span className="text-sm text-muted-foreground">
+          Empareja pares de cartas con especies en peligro para poner a prueba tu memoria
+          y aprender sobre la conservación de la vida silvestre.
+        </span>
+      </div>
+      <Tabs defaultValue="easy">
+        <TabsList className="w-[400px] ms:grid sm:grid-cols-3 gap-2">
+          <TabsTrigger value="easy">Fácil 4x4</TabsTrigger>
+          <TabsTrigger value="medium">Medio 6x6</TabsTrigger>
+          <TabsTrigger value="hard">Difícil 8x8</TabsTrigger>
+        </TabsList>
+        <Separator />
+        <TabsContent value="easy">
+          <div className="grid md:grid-cols-2 gap-4 p-4">
+            {easyMemory.map((item, index) => (
+              <Card key={index} className="bg-sidebar">
+                <CardHeader>
+                  <span className="text-3xl">{item.icon}</span>
+                  <span className="text-muted-foreground">{item.subTitle === 'Game Rules' ? 'Reglas del juego' : item.subTitle === 'Your stats' ? 'Tus estadísticas' : item.subTitle}</span>
+                </CardHeader>
+                <CardContent className="flex flex-1 flex-col gap-4">
+                  <CardTitle>{item.title === 'How To Play' ? 'Cómo jugar' : item.title === 'Game Progress' ? 'Progreso del juego' : item.title}</CardTitle>
+                  <CardDescription>{item.description.replace('Flip cards to find matching pairs. Learn about cach each species when you make a match.\nComplete the board as quickly as possible.', 'Voltea cartas para encontrar pares. Aprende sobre cada especie cuando hagas un match.\nCompleta el tablero lo más rápido posible.').replace('Best Time: 2:45 min | Species identified: 18/30 | Current streak: 3 games', 'Mejor tiempo: 2:45 min | Especies identificadas: 18/30 | Racha actual: 3 juegos')}</CardDescription>
+                  <div className="mt-auto space-x-4">
+                    <Button type="button">Iniciar juego</Button>
+                    <Button type="button" variant="secondary">
+                      Tutorial
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </TabsContent>
+        <TabsContent value="medium" className="p-4">
+          <div className="flex-1 h-64 rounded-lg border-2 border-dashed" />
+        </TabsContent>
+        <TabsContent value="hard" className="p-4">
+          <div className="flex-1 h-64 rounded-lg border-2 border-dashed" />
+        </TabsContent>
+      </Tabs>
+      <div className="">
+        <Label className="text-2xl p-3">Especies destacadas</Label>
+        {featuredSpecies.map((item, index) => (
+          <React.Fragment key={index}>
+            <div className="flex items-center mb-4 border-b p-1">
+              <Avatar className="w-12 h-12 mr-3 rounded-lg">
+                <AvatarImage src={item.image} alt={item.name} />
+                <AvatarFallback>CN</AvatarFallback>
+              </Avatar>
+              <div className="grid flex-1 text-left text-md leading-tight">
+                <span className="truncate font-medium">{item.name}</span>
+                <span className="truncate text-xs">{item.description}</span>
               </div>
-            </CardContent>
-            {/* Modal de detalles para cada juego */}
-            <Dialog open={openModal === item.id} onOpenChange={() => setOpenModal(null)}>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>{item.title}</DialogTitle>
-                  <DialogDescription>{gameDetails[item.id]?.descripcion}</DialogDescription>
-                </DialogHeader>
-                <div className="mt-4">
-                  <Label className="text-lg mb-2">Tutorial</Label>
-                  <ul className="list-decimal pl-6 space-y-1 mt-2">
-                    {gameDetails[item.id]?.tutorial.map((step, i) => (
-                      <li key={i}>{step}</li>
-                    ))}
-                  </ul>
-                </div>
-                <div className="mt-4">
-                  <Label className="text-lg mb-2">Reglas del juego</Label>
-                  <ul className="list-disc pl-6 space-y-1 mt-2">
-                    {gameDetails[item.id]?.reglas.map((rule, i) => (
-                      <li key={i}>{rule}</li>
-                    ))}
-                  </ul>
-                </div>
-                <DialogFooter>
-                  <Button onClick={() => setOpenModal(null)}>Cerrar</Button>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
-          </Card>
+            </div>
+          </React.Fragment>
         ))}
-      </div>
-      {/* Selector de juego para el top */}
-      <div className="flex items-center gap-4 mt-10 mb-2">
-        <Label className="text-xl">Top 5 de usuarios en:</Label>
-        <select
-          className="border rounded-lg px-3 py-1 text-base"
-          value={selectedGame}
-          onChange={e => setSelectedGame(e.target.value)}
-        >
-          <option value="Memoria">Memoria</option>
-          <option value="Desafío Eco Explorador">Desafío Eco Explorador</option>
-          <option value="Cuestionario de Especies">Cuestionario de Especies</option>
-          <option value="Simulación de Conservación">Simulación de Conservación</option>
-        </select>
-      </div>
-      {/* Tabla de top 5 de usuarios */}
-      <div>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="w-12 text-center">#</TableHead>
-              <TableHead>Usuario</TableHead>
-              <TableHead>Juego</TableHead>
-              <TableHead>Puntaje</TableHead>
-              <TableHead>Fecha</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {loading ? (
-              <TableRow>
-                <TableCell colSpan={5} className="text-center">Cargando...</TableCell>
-              </TableRow>
-            ) : scores.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={5} className="text-center">No hay puntajes aún.</TableCell>
-              </TableRow>
-            ) : (
-              scores.map((item, idx) => (
-                <TableRow key={idx}>
-                  <TableCell className="text-center">
-                    {idx === 0 ? <Crown className="text-yellow-500 w-6 h-6 mx-auto" /> :
-                     idx === 1 ? <Medal className="text-gray-400 w-6 h-6 mx-auto" /> :
-                     idx === 2 ? <Trophy className="text-amber-700 w-6 h-6 mx-auto" /> :
-                     <User className="text-blue-400 w-5 h-5 mx-auto" />}
-                  </TableCell>
-                  <TableCell>{item.userName}</TableCell>
-                  <TableCell>{item.game}</TableCell>
-                  <TableCell className="font-bold text-blue-700">{item.score}</TableCell>
-                  <TableCell>{item.date?.slice(0, 10)}</TableCell>
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
       </div>
     </div>
   );
