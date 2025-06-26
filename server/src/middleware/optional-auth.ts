@@ -1,4 +1,4 @@
-import jwt from "jsonwebtoken";
+import jwt, { JwtPayload } from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
 
 export const optionalAuth = (
@@ -12,8 +12,10 @@ export const optionalAuth = (
   if (token) {
     try {
       const decoded = jwt.verify(token, process.env.JWT_SECRET as string);
-      if (req && "user" in req) {
-        req.user = decoded;
+      if (typeof decoded === "object" && decoded !== null) {
+        req.user = decoded as JwtPayload;
+      } else {
+        req.user = undefined;
       }
     } catch (_) {
       // Silenciar error, no interrumpimos el flujo

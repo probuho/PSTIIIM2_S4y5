@@ -1,6 +1,6 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { main } from "@/pages/layout";
+import { main } from "@/pages/main-menu";
 import { Link, useLocation } from "react-router-dom";
 import { Label } from "@/components/ui/label";
 import {
@@ -12,34 +12,20 @@ import {
 } from "@/components/ui/card";
 import { contributions, modules, stats } from "@/pages/home/data";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import ShaderBackground from "@/components/ShaderBackground";
 
 export default function HomePage() {
   const location = useLocation();
 
   return (
-    <div className="flex flex-col gap-5">
-      <div className="flex flex-col justify-center items-center gap-4 p-10">
-        <h1 className="text-4xl font-semibold">Guía del Explorador</h1>
-        <h2 className="text-muted-foreground">Explora, Aprende y Conserva</h2>
-        <Button type="button" asChild>
-          <Link to="/discover">Descubrir la Naturaleza</Link>
-        </Button>
-      </div>
-      <div className="flex gap-4 justify-center items-center">
-        {main.map((item, index) => {
-          const isActive = location.pathname === item.url;
-          return (
-            <Button
-              key={index}
-              type="button"
-              variant={isActive ? "default" : "secondary"}
-              size={"icon"}
-              asChild
-            >
-              <Link to={item.url}>{item.emoji}</Link>
-            </Button>
-          );
-        })}
+    <div className="flex flex-col gap-8">
+      {/* Jumbotron visual principal */}
+      <div className="relative overflow-hidden rounded-xl min-h-[300px] flex items-center justify-center mb-8">
+        <ShaderBackground />
+        <div className="relative z-10 p-8 text-center">
+          <h1 className="text-4xl font-bold mb-2">¡Bienvenido a la exploración!</h1>
+          <p className="text-lg text-muted-foreground">Descubre, aprende y comparte sobre la naturaleza con la comunidad.</p>
+        </div>
       </div>
       <section className="flex flex-col gap-4">
         <Label className="text-2xl font-bold">Módulos Destacados</Label>

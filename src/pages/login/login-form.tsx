@@ -21,13 +21,15 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Link, useNavigate } from "react-router-dom";
-import { useSession, type User } from "@/components/context/auth-context";
+import { useSession } from "@/components/context/auth-context";
+import { toast } from "sonner";
 import FormError from "@/components/error-form";
 import axios from "axios";
+import { Mail, Lock } from "lucide-react";
 
 const LoginSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(8),
+  email: z.string().email({ message: "Correo inválido" }),
+  password: z.string().min(6, { message: "La contraseña debe tener al menos 6 caracteres" }),
 });
 
 export function LoginForm({
@@ -35,16 +37,11 @@ export function LoginForm({
   ...props
 }: React.ComponentProps<"div">) {
   const { signIn } = useSession();
+  const navigate = useNavigate();
   const [isPending, startTransition] = React.useTransition();
   const [error, setError] = React.useState<string | undefined>(undefined);
-  const navigate = useNavigate();
 
-  React.useEffect(() => {
-    setTimeout(() => {
-      setError(undefined);
-    }, 2000);
-  }, [error]);
-
+  // Verificación de si ya está logueado
   React.useEffect(() => {
     const authData = localStorage.getItem("auth");
     if (authData) {
@@ -52,114 +49,108 @@ export function LoginForm({
     }
   }, [navigate]);
 
-  React.useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      navigate("/");
-    }
-  }, [navigate]);
-
-  const form = useForm<z.infer<typeof LoginSchema>>({
+  const form = useForm({
     resolver: zodResolver(LoginSchema),
-    defaultValues: {
-      email: "",
-      password: "",
-    },
+    defaultValues: { email: "", password: "" },
   });
 
-  const onSubmit = (values: z.infer<typeof LoginSchema>) => {
+  const onSubmit = (values: any) => {
     startTransition(async () => {
       try {
-        const response = await axios.post(`http://localhost:4000/signIn`, {
-          email: values.email,
-          password: values.password,
-        });
-
-        const data = response.data as {
-          user: User;
-          accessToken: string;
-          refreshToken: string;
-        };
+        const response = await axios.post(`http://localhost:3001/signIn`, values);
+        const data = response.data;
         signIn(data.user, data.accessToken, data.refreshToken);
+        toast.success("¡Inicio de sesión exitoso!");
         navigate("/");
       } catch (error: any) {
-        const message = error.response
-          ? error.response.data.error
-          : error.message;
-        setError(message);
+        let message = "";
+        if (error.response?.status === 401) {
+          message = "Tus credenciales son incorrectas.";
+        } else if (error.response?.data?.error) {
+          message = error.response.data.error;
+        } else {
+          message = "Ocurrió un error, por favor intenta de nuevo.";
+        }
+        toast.error(message);
       }
     });
   };
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <Card>
-        <CardHeader className="flex flex-col items-center">
-          <CardTitle>Inicia Sesión</CardTitle>
-          <CardDescription>
-            Ingrese su correo electrónico para continuar
+      <Card className="w-full bg-white rounded-xl shadow-lg border-0">
+        <CardHeader className="text-center pb-4">
+          <div className="mx-auto w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center mb-4">
+            <Lock className="text-white" size={24} />
+          </div>
+          <CardTitle className="text-2xl font-bold text-gray-800">Iniciar sesión</CardTitle>
+          <CardDescription className="text-gray-500">
+            Accede a tu cuenta
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="px-2 pb-8">
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)}>
-              <div className="flex flex-col gap-6">
-                <FormField
-                  control={form.control}
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel htmlFor="email">Correo electrónico</FormLabel>
-                      <FormControl>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 w-full">
+              {/* Email */}
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <div className="relative">
                         <Input
                           {...field}
                           type="email"
-                          placeholder="john.doe@movilnet.com.ve"
-                          disabled={isPending}
+                          placeholder="Correo electrónico"
+                          className="pl-10 h-12 border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-lg transition-all duration-200 w-full"
                         />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="password"
-                  render={({ field }) => (
-                    <FormItem>
-                      <div className="flex items-center">
-                        <FormLabel>Contraseña</FormLabel>
-                        <Link
-                          to="/reset"
-                          className="ml-auto text-xs underline-offset-2 hover:underline"
-                        >
-                          Olvidaste tu contraseña?
-                        </Link>
+                        <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
                       </div>
-                      <FormControl>
+                    </FormControl>
+                    <FormMessage className="text-red-500 text-xs mt-1" />
+                  </FormItem>
+                )}
+              />
+              {/* Contraseña */}
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <div className="relative">
                         <Input
                           {...field}
                           type="password"
-                          placeholder="*******"
-                          disabled={isPending}
+                          placeholder="Contraseña"
+                          autoComplete="current-password"
+                          className="pl-10 h-12 border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-lg transition-all duration-200 w-full"
                         />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormError message={error} />
-                <div className="flex flex-col gap-3">
-                  <Button type="submit" className="w-full" disabled={isPending}>
-                    Login
-                  </Button>
-                </div>
-              </div>
-              <div className="mt-4 text-center text-sm">
-                ¿No tienes una cuenta?{" "}
-                <Link to="/register" className="underline underline-offset-4">
-                  Registrarse
-                </Link>
+                        <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                      </div>
+                    </FormControl>
+                    <FormMessage className="text-red-500 text-xs mt-1" />
+                  </FormItem>
+                )}
+              />
+              <FormError message={error} />
+              {/* Botón de login */}
+              <Button type="submit" className="w-full h-12 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold rounded-lg transition-all duration-200 transform hover:scale-[1.02]" disabled={isPending}>
+                {isPending ? "Entrando..." : "Entrar"}
+              </Button>
+              {/* Enlaces */}
+              <div className="text-center pt-4">
+                <p className="text-gray-500 text-sm">
+                  ¿No tienes cuenta?{' '}
+                  <button
+                    type="button"
+                    onClick={() => navigate("/register")}
+                    className="text-blue-600 hover:text-blue-700 font-medium transition-colors duration-200"
+                  >
+                    Crear cuenta
+                  </button>
+                </p>
               </div>
             </form>
           </Form>

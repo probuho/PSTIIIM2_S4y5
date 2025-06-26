@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState } from "react";
+import { toast } from "sonner";
 
 export type User = {
   id: string;
@@ -46,6 +47,32 @@ export const SessionProvider = ({
       return storedAuth ? JSON.parse(storedAuth) : null;
     }
   );
+
+  // Lógica de cierre por inactividad
+  React.useEffect(() => {
+    let timeout: NodeJS.Timeout;
+    const resetTimer = () => {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => {
+        setSession(null);
+        localStorage.removeItem("auth");
+        localStorage.removeItem("refreshToken");
+        toast.info("Sesión cerrada por inactividad. Por favor, inicia sesión de nuevo.");
+      }, 30 * 60 * 1000); // 30 minutos
+    };
+    if (session) {
+      window.addEventListener("mousemove", resetTimer);
+      window.addEventListener("keydown", resetTimer);
+      window.addEventListener("click", resetTimer);
+      resetTimer();
+    }
+    return () => {
+      clearTimeout(timeout);
+      window.removeEventListener("mousemove", resetTimer);
+      window.removeEventListener("keydown", resetTimer);
+      window.removeEventListener("click", resetTimer);
+    };
+  }, [session]);
 
   const signIn = (user: User, accessToken: string, refreshToken: string) => {
     setSession({ user, token: accessToken });
