@@ -128,8 +128,10 @@ PSTIIIM2_S4y5/
 
 ## Créditos y autores
 
-- [@Hhazan01](https://github.com/hhazan01)
-- [@Probuho](https://github.com/probuho)
+-Enmanuela Gutierrez
+-Luis Herrera
+-Antonio Ruiz [@Probuho](https://github.com/probuho)
+-Abraham Haz [@Hhazan01](https://github.com/hhazan01) (Colaborador externo)
 
 ---
 
