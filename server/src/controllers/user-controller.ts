@@ -2,7 +2,6 @@ import { prisma } from "../lib/prisma";
 import bcrypt from "bcryptjs";
 import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
-import { logGeneral } from "../lib/logger";
 
 class UserController {
   async register(req: Request, res: Response): Promise<void> {
@@ -156,84 +155,6 @@ class UserController {
       res.status(200).json({ valid: true, decoded });
     } catch (error) {
       res.status(401).json({ valid: false, error: "Token inválido" });
-    }
-  }
-
-  async getProfile(req: Request, res: Response): Promise<void> {
-    logGeneral("[DEBUG] Iniciando obtención de perfil", "INFO");
-    try {
-      const userId = req.user?.userId || (req as any).user?.userId;
-      logGeneral(`[DEBUG] userId extraído del token: ${userId}`);
-      if (!userId) {
-        logGeneral("[ERROR] No se pudo extraer el userId del token", "ERROR");
-        res.status(401).json({ error: "No autorizado" });
-        return;
-      }
-      // Obtener datos básicos del usuario
-      const user = await prisma.user.findUnique({
-        where: { id: userId },
-        include: {
-          logros: true, // Relación logros (ajusta según tu modelo)
-          comunidades: true, // Relación comunidades (ajusta según tu modelo)
-          aportes: true, // Relación aportes (ajusta según tu modelo)
-          replicas: true, // Relación réplicas (ajusta según tu modelo)
-          guardados: true, // Relación guardados (ajusta según tu modelo)
-          actividad: true, // Relación actividad (ajusta según tu modelo)
-          preferencias: true, // Relación preferencias (ajusta según tu modelo)
-        },
-      });
-      if (!user) {
-        res.status(404).json({ error: "Usuario no encontrado" });
-        return;
-      }
-      res.status(200).json({
-        id: user.id,
-        nombre: user.name,
-        avatarUrl: user.avatarUrl,
-        nivel: user.nivel,
-        puntos: user.puntos,
-        miembroDesde: user.createdAt,
-        logros: user.logros,
-        comunidades: user.comunidades,
-        aportes: user.aportes,
-        replicas: user.replicas,
-        guardados: user.guardados,
-        actividad: user.actividad,
-        preferencias: user.preferencias,
-      });
-    } catch (error: any) {
-      logGeneral(`[ERROR] Error al obtener perfil: ${error.message}`, "ERROR");
-      res.status(500).json({ error: "Error al obtener el perfil" });
-    }
-  }
-
-  async getRoadmap(req: Request, res: Response): Promise<void> {
-    try {
-      const userId = (req as any).user?.userId;
-      if (!userId) {
-        res.status(401).json({ error: "No autenticado" });
-        return;
-      }
-      // Obtener todos los logros y tareas
-      const logros = await prisma.logro.findMany({
-        include: { tareas: true }
-      });
-      // Obtener progreso del usuario
-      const usuarioLogros = await prisma.usuarioLogro.findMany({
-        where: { userId },
-      });
-      // Mapear progreso
-      const roadmap = logros.map(logro => {
-        const userLogro = usuarioLogros.find(ul => ul.logroId === logro.id);
-        return {
-          ...logro,
-          progreso: userLogro?.progreso || 0,
-          completado: (userLogro?.progreso || 0) >= 100
-        };
-      });
-      res.status(200).json({ roadmap });
-    } catch (error) {
-      res.status(500).json({ error: "Error al obtener el roadmap" });
     }
   }
 }

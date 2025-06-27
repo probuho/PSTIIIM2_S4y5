@@ -5,6 +5,8 @@ import { DynamicBreadcrumb } from "@/components/utils/dynamic-breadcrumb";
 import { useSession } from "@/components/context/auth-context";
 import NavUser from "./nav-user";
 import { main } from "./main-menu";
+import { User } from "lucide-react";
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const location = useLocation();
@@ -35,20 +37,27 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           {session?.user ? (
             <NavUser />
           ) : (
-            <>
-              <Button type="button" variant={"ghost"} size={"sm"}>
-                <Link to="/login">Comenzar a Explorar</Link>
-              </Button>
-              <Button type="button" variant={"secondary"} size={"sm"}>
-                <Link to="/login">Iniciar sesión</Link>
-              </Button>
-            </>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" className="rounded-full">
+                  <User className="w-6 h-6" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" modal={false}>
+                <DropdownMenuItem asChild>
+                  <Link to="/login">Iniciar sesión</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to="/register">Registrarse</Link>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           )}
         </div>
       </header>
-      <div className="h-[90px]" />
-      <main className="flex-1 overflow-y-auto p-2 pt-0 flex justify-center items-start">
-        <div className="w-full md:w-[1050px]">
+      <div className="h-[100px]" />
+      <main className="flex-1 overflow-y-auto p-5 pt-0 flex justify-center items-start">
+        <div className="w-full md:w-[1050px] space-y-5">
           <DynamicBreadcrumb />
           {children}
         </div>

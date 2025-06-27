@@ -33,6 +33,10 @@ export function DialogTitle({ children }: { children: React.ReactNode }) {
   return <h2 className="text-xl font-bold mb-2">{children}</h2>;
 }
 
+export function DialogDescription({ children }: { children: React.ReactNode }) {
+  return <p className="text-gray-600 mb-2">{children}</p>;
+}
+
 export function DialogFooter({ children }: { children: React.ReactNode }) {
   return <div className="mt-4 flex justify-end gap-2">{children}</div>;
 } 
