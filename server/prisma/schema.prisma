@@ -178,3 +178,31 @@ model GameScore {
   score     Int
   date      DateTime @default(now())
 }
+
+model Species {
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  nombre          String
+  nombreCientifico String
+  categoria       String   // "Mamíferos", "Aves", "Reptiles", "Anfibios", "Peces", "Plantas"
+  estadoConservacion String // "Extinto", "En peligro crítico", "En peligro", "Vulnerable", "Casi amenazado", "Preocupación menor"
+  habitat         String
+  descripcion     String
+  caracteristicas String[] // Array de características principales
+  imagenUrl       String?
+  imagenCientifica String?
+  distribucion    String   // Zona geográfica donde se encuentra
+  alimentacion    String
+  reproduccion    String
+  amenazas        String[]
+  medidasConservacion String[]
+  curiosidades    String[]
+  fechaDescubrimiento DateTime?
+  autorDescubrimiento String?
+  nivelAmenaza    Int     // 1-5, donde 1 es menos amenazado y 5 es crítico
+  poblacionEstimada String?
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@map("species")
+}

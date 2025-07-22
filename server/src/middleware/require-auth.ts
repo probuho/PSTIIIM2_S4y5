@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
+import { JwtPayload } from "jsonwebtoken";
 
 export const requireAuth = (
   req: Request,
@@ -16,8 +17,10 @@ export const requireAuth = (
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET as string);
-    if (req && "user" in req) {
-      req.user = decoded;
+    if (typeof decoded === "object" && decoded !== null) {
+      req.user = decoded as JwtPayload;
+    } else {
+      req.user = undefined;
     }
     return next();
   } catch (error) {
