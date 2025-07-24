@@ -10,18 +10,20 @@ import { useTopScores } from "@/hooks/useTopScores";
 
 // Diccionario de detalles de juegos
 const gameDetails: Record<string, { descripcion: string; tutorial: string[]; reglas: string[] }> = {
-  "eco-explorer": {
-    descripcion: "Responde preguntas y supera retos para convertirte en un verdadero explorador ecológico. Aprende sobre el medio ambiente y la conservación mientras avanzas por diferentes niveles.",
+  "crucigrama": {
+    descripcion: "Demuestra tus conocimientos como verdadero explorador ecológico al identificar las organismos del planeta con las pistas dadas.",
     tutorial: [
-      "Lee atentamente cada pregunta o reto.",
-      "Selecciona la respuesta correcta o realiza la acción indicada.",
-      "Avanza de nivel al acertar y aprende datos curiosos sobre la naturaleza.",
-      "Intenta obtener la mayor puntuación posible."
+      "Lee atentamente cada pista ofrecida.",
+      "Selecciona la casilla correspondiente a la pista.",
+      "Ingresa el nombre de la especie.",
+      "Descubre todas las especies para ganar."
     ],
     reglas: [
-      "Tienes un tiempo límite para responder cada pregunta.",
-      "Cada respuesta correcta suma puntos, las incorrectas no restan.",
-      "Al finalizar, podrás ver tu puntuación y aprender más sobre los temas tratados."
+      "Al seleccionar una casilla la pista correspondiente a esa palabra se resaltara.",
+      "Tras leer la pista de la palabra se tienen que ingresar letras en cada casilla hasta completar la palabra.",
+      "De acertar el nombre de la especie se sumará el puntaje aumentara.",
+      "Al rellenar todas las casillas se obtendra la puntuación máxima y el juego terminará.",
+      "La puntuación final dependerá del modo de dificultad completado."
     ]
   },
   "memoria": {
@@ -38,18 +40,18 @@ const gameDetails: Record<string, { descripcion: string; tutorial: string[]; reg
       "Tu puntuación depende del tiempo y los movimientos realizados."
     ]
   },
-  "species-identification": {
-    descripcion: "Pon a prueba tu capacidad para identificar diferentes especies de plantas y animales. Aprende a reconocerlas y conoce datos interesantes sobre cada una.",
+  "eco-explorer": {
+    descripcion: "Responde preguntas y supera retos para convertirte en un verdadero explorador ecológico. Aprende sobre el medio ambiente y la conservación mientras avanzas por diferentes niveles.",
     tutorial: [
-      "Observa la imagen o descripción de la especie.",
-      "Selecciona el nombre correcto entre varias opciones.",
-      "Recibe retroalimentación inmediata y aprende sobre cada especie.",
-      "Intenta identificar la mayor cantidad posible en el menor tiempo."
+      "Lee atentamente cada pregunta o reto.",
+      "Selecciona la respuesta correcta o realiza la acción indicada.",
+      "Avanza de nivel al acertar y aprende datos curiosos sobre la naturaleza.",
+      "Intenta obtener la mayor puntuación posible."
     ],
     reglas: [
-      "Cada respuesta correcta suma puntos.",
-      "No hay penalización por errores, ¡anímate a intentarlo!",
-      "Al final, podrás revisar tus aciertos y aprender más sobre las especies."
+      "Tienes un tiempo límite para responder cada pregunta.",
+      "Cada respuesta correcta suma puntos, las incorrectas no restan.",
+      "Al finalizar, podrás ver tu puntuación y aprender más sobre los temas tratados."
     ]
   },
   "conservation-simulation": {
@@ -146,8 +148,8 @@ export default function GamePage() {
           onChange={e => setSelectedGame(e.target.value)}
         >
           <option value="Memoria">Memoria</option>
+          <option value="Crucigrama">Crucigrama</option>
           <option value="Desafío Eco Explorador">Desafío Eco Explorador</option>
-          <option value="Cuestionario de Especies">Cuestionario de Especies</option>
           <option value="Simulación de Conservación">Simulación de Conservación</option>
         </select>
       </div>

@@ -338,6 +338,12 @@ export default function MemoryPage() {
                 </ToggleGroup>
               </div>
               <Button className="w-full mt-2 text-lg py-6 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold" onClick={() => { setShowEnd(false); shuffleCards(); setMoves(0); setTimer(0); setIsRunning(false); }}>Jugar de Nuevo</Button>
+              <Button
+                className="w-full text-lg py-3 rounded-xl bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold"
+                onClick={() => setShowEnd(false)}
+              >
+                Cerrar
+              </Button>
             </div>
           </div>
         )}

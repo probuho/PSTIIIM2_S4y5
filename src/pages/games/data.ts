@@ -1,13 +1,5 @@
 export const games = [
   {
-    id: "eco-explorer",
-    title: "Desafío Eco Explorador",
-    description:
-      "Pon a prueba tus conocimientos ambientales y habilidades de conservación en este desafío interactivo",
-    icon: "🌍",
-    link: "/games/eco-explorer",
-  },
-  {
     id: "memoria",
     title: "Memoria",
     description:
@@ -16,12 +8,20 @@ export const games = [
     link: "/games/memory",
   },
   {
-    id: "species-identification",
-    title: "Cuestionario de Identificación de Especies",
+    id: "crucigrama",
+    title: "Crucigrama de Identificación de Especies",
     description:
-      "Prueba tu capacidad para identificar diferentes especies de plantas y animales",
+      "Prueba tu capacidad para identificar diferentes especies de animales",
     icon: "🦋",
-    link: "/games/species-quiz",
+    link: "/games/crossword",
+  },
+  {
+    id: "eco-explorer",
+    title: "Desafío Eco Explorer",
+    description:
+      "Pon a prueba tus conocimientos ambientales y habilidades de conservación en este desafío interactivo",
+    icon: "🌍",
+    link: "/games/eco-explorer",
   },
   {
     id: "conservation-simulation",

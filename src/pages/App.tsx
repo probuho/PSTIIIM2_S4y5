@@ -9,6 +9,7 @@ import ProfilePage from "./profile/profile-age";
 import SightingsPage from "./sightings/sightings-page";
 import SightingDetail from "./sightings/sighting-detail";
 import MemoryPage from "./games/memory/memory-page";
+import CrosswordPage from "./games/crossword/crossword-page";
 import RoutesPage from "./routes/routes-page";
 import SpeciesPage from "./especies/species-page";
 
@@ -23,6 +24,7 @@ function App() {
           <Route path="/community" element={<CommunityPage />} />
           <Route path="/games" element={<GamePage />} />
           <Route path="/games/memory" element={<MemoryPage />} />
+          <Route path="/games/crossword" element={<CrosswordPage />} />
           <Route path="/routes" element={<RoutesPage />} />
           <Route path="/sightings" element={<SightingsPage />} />
           <Route path="/sightings/:id" element={<SightingDetail />} />
