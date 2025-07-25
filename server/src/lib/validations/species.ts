@@ -5,17 +5,19 @@ export const createSpeciesSchema = z.object({
   nombre: z.string().min(2, "El nombre debe tener al menos 2 caracteres").max(100),
   nombreCientifico: z.string().min(2, "El nombre científico debe tener al menos 2 caracteres").max(100),
   categoria: z.enum(["Mamíferos", "Aves", "Reptiles", "Anfibios", "Peces", "Plantas"], {
-    errorMap: () => ({ message: "Categoría debe ser una de las opciones válidas" })
+    // CAMBIO AQUÍ: de errorMap a message
+    message: "Categoría debe ser una de las opciones válidas"
   }),
   estadoConservacion: z.enum([
-    "Extinto", 
-    "En peligro crítico", 
-    "En peligro", 
-    "Vulnerable", 
-    "Casi amenazado", 
+    "Extinto",
+    "En peligro crítico",
+    "En peligro",
+    "Vulnerable",
+    "Casi amenazado",
     "Preocupación menor"
   ], {
-    errorMap: () => ({ message: "Estado de conservación debe ser una de las opciones válidas" })
+    // CAMBIO AQUÍ: de errorMap a message
+    message: "Estado de conservación debe ser una de las opciones válidas"
   }),
   habitat: z.string().min(10, "El hábitat debe tener al menos 10 caracteres").max(500),
   descripcion: z.string().min(50, "La descripción debe tener al menos 50 caracteres").max(2000),
@@ -45,11 +47,11 @@ export const searchSpeciesSchema = z.object({
   categoria: z.enum(["Todos", "Mamíferos", "Aves", "Reptiles", "Anfibios", "Peces", "Plantas"]).optional(),
   estadoConservacion: z.enum([
     "Todos",
-    "Extinto", 
-    "En peligro crítico", 
-    "En peligro", 
-    "Vulnerable", 
-    "Casi amenazado", 
+    "Extinto",
+    "En peligro crítico",
+    "En peligro",
+    "Vulnerable",
+    "Casi amenazado",
     "Preocupación menor"
   ]).optional(),
   limit: z.number().int().min(1).max(100).default(20),
@@ -65,4 +67,4 @@ export const getSpeciesByIdSchema = z.object({
 export type CreateSpeciesInput = z.infer<typeof createSpeciesSchema>;
 export type UpdateSpeciesInput = z.infer<typeof updateSpeciesSchema>;
 export type SearchSpeciesInput = z.infer<typeof searchSpeciesSchema>;
-export type GetSpeciesByIdInput = z.infer<typeof getSpeciesByIdSchema>; 
+export type GetSpeciesByIdInput = z.infer<typeof getSpeciesByIdSchema>;

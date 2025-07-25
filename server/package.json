@@ -39,6 +39,7 @@
     "lucide-react": "^0.524.0",
     "morgan": "^1.10.0",
     "react-router-dom": "^7.6.2",
-    "rimraf": "^6.0.1"
+    "rimraf": "^6.0.1",
+    "zod": "^4.0.10"
   }
 }
