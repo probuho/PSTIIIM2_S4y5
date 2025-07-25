@@ -14,6 +14,7 @@ const breadcrumbTranslations: Record<string, string> = {
   home: "Inicio",
   games: "Juegos",
   memory: "Memoria",
+  crossword: "Crucigrama",
   "eco-explorer": "Eco Explorador",
   "species-quiz": "Cuestionario de Especies",
   "conservation-sim": "Simulación de Conservación",
