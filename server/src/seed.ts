@@ -13,17 +13,26 @@ async function main() {
 
   for (const user of users) {
     const hashed = await bcrypt.hash(user.password, 10);
-    await prisma.user.upsert({
-      where: { email: user.email },
-      update: {},
-      create: {
-        name: user.name,
-        nickname: user.nickname,
-        email: user.email,
-        password: hashed,
-        // Los campos con default no es necesario especificarlos
-      },
-    });
+    const existing = await prisma.user.findUnique({ where: { email: user.email } });
+    if (existing) {
+      await prisma.user.update({
+        where: { email: user.email },
+        data: {
+          name: user.name,
+          nickname: user.nickname,
+          password: hashed,
+        },
+      });
+    } else {
+      await prisma.user.create({
+        data: {
+          name: user.name,
+          nickname: user.nickname,
+          email: user.email,
+          password: hashed,
+        },
+      });
+    }
   }
 
   // Especies ficticias
@@ -127,6 +136,51 @@ async function main() {
     } else {
       await prisma.species.create({ data: s });
     }
+  }
+
+  // Top 5 puntajes demo para el juego "memoria"
+  // Primero obtenemos los usuarios demo de la base (por si ya existen)
+  const demoUsers = await prisma.user.findMany({
+    where: {
+      email: { in: ["usuario1@demo.com", "usuario2@demo.com", "usuario3@demo.com"] }
+    }
+  });
+
+  const scores = [
+    {
+      userId: demoUsers[0]?.id,
+      userName: demoUsers[0]?.nickname || "usuario1",
+      game: "Memoria",
+      score: 120,
+    },
+    {
+      userId: demoUsers[1]?.id,
+      userName: demoUsers[1]?.nickname || "usuario2",
+      game: "Memoria",
+      score: 110,
+    },
+    {
+      userId: demoUsers[2]?.id,
+      userName: demoUsers[2]?.nickname || "usuario3",
+      game: "Memoria",
+      score: 100,
+    },
+    {
+      userId: null,
+      userName: "Anónimo",
+      game: "Memoria",
+      score: 90,
+    },
+    {
+      userId: null,
+      userName: "Anónimo",
+      game: "Memoria",
+      score: 80,
+    },
+  ];
+
+  for (const s of scores) {
+    await prisma.gameScore.create({ data: s });
   }
 
   console.log('Datos ficticios insertados correctamente.');
