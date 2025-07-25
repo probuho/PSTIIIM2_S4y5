@@ -1,4 +1,5 @@
 import React from "react";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
@@ -35,11 +36,8 @@ type CardType = {
 };
 
 type Score = {
-  date: string;
-  moves: number;
-  time: string;
-  difficulty: string;
-  user: string;
+  userName: string;
+  score: number;
 };
 
 function getNowDate() {
@@ -64,7 +62,8 @@ export default function MemoryPage() {
   const [timer, setTimer] = React.useState(0);
   const [isRunning, setIsRunning] = React.useState(false);
   const [showEnd, setShowEnd] = React.useState(false);
-  const [scores, setScores] = React.useState<Score[]>([]);
+  // Top 5 global desde backend
+  const [topScores, setTopScores] = React.useState<Score[]>([]);
 
   // Lógica de dificultad
   const getSymbolsForDifficulty = () => {
@@ -81,20 +80,22 @@ export default function MemoryPage() {
     return 4;
   };
 
-  // Cargar historial de puntuaciones desde localStorage/sessionStorage
+
+  // Obtener top 5 real desde backend
   React.useEffect(() => {
-    const key = "memory-scores";
-    const raw = window.localStorage.getItem(key);
-    if (raw) {
-      setScores(JSON.parse(raw));
-    }
+    fetch("/api/games/memory/top")
+      .then((res) => res.json())
+      .then((data) => {
+        if (Array.isArray(data)) {
+          setTopScores(data);
+        }
+      })
+      .catch(() => {
+        setTopScores([]);
+      });
   }, []);
 
-  // Guardar historial de puntuaciones en localStorage/sessionStorage
-  const saveScores = (newScores: Score[]) => {
-    setScores(newScores);
-    window.localStorage.setItem("memory-scores", JSON.stringify(newScores));
-  };
+
 
   // Timer funcional
   React.useEffect(() => {
@@ -117,17 +118,23 @@ export default function MemoryPage() {
     if (matches === getSymbolsForDifficulty().length) {
       setIsRunning(false);
       setShowEnd(true);
-      // Guardar puntuación
-      const user = session?.user?.nickname || "Anónimo";
-      const newScore: Score = {
-        date: getNowDate(),
-        moves,
-        time: formatTime(timer),
-        difficulty: difficultyOptions.find((d) => d.value === difficulty)?.label || difficulty,
-        user,
-      };
-      const newScores = [newScore, ...scores].slice(0, 10); // Máximo 10 registros
-      saveScores(newScores);
+      // Guardar puntaje en backend
+      const userName = session?.user?.nickname || "Anónimo";
+      const userId = session?.user?.id || null;
+      const score = Math.max(0, 200 - moves * 2 - timer); // Ejemplo de cálculo de score
+      fetch("/api/games/memory/score", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId, userName, score }),
+      })
+        .then(() => {
+          // Refrescar el top 5 después de guardar
+          fetch("/api/games/memory/top")
+            .then((res) => res.json())
+            .then((data) => {
+              if (Array.isArray(data)) setTopScores(data);
+            });
+        });
       toast.success("¡Felicidades! Has completado el juego de memoria.");
     }
     // eslint-disable-next-line
@@ -196,9 +203,7 @@ export default function MemoryPage() {
             <ToggleGroupItem
               key={opt.value}
               value={opt.value}
-              variant={difficulty === opt.value ? "outline" : "default"}
-              size="lg"
-              className="flex-1 py-4 px-0 rounded-xl text-base shadow-sm border-2 data-[state=on]:border-blue-600 data-[state=on]:bg-blue-50"
+              className={`flex-1 py-4 px-0 rounded-xl text-base shadow-sm border-2 ${difficulty === opt.value ? "border-blue-600 bg-blue-50" : ""}`}
             >
               {opt.label}
             </ToggleGroupItem>
@@ -212,25 +217,24 @@ export default function MemoryPage() {
           </div>
         </div>
         <div>
-          <Label className="text-md mb-2">Historial de Puntuaciones</Label>
+          <Label className="text-md mb-2">Top 5 Global (Memoria)</Label>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Fecha</TableHead>
                 <TableHead>Usuario</TableHead>
-                <TableHead>Mov.</TableHead>
-                <TableHead>Tiempo</TableHead>
-                <TableHead>Dificultad</TableHead>
+                <TableHead>Puntaje</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {scores.map((score, i) => (
+              {topScores.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={2}>No hay datos</TableCell>
+                </TableRow>
+              )}
+              {topScores.map((score, i) => (
                 <TableRow key={i}>
-                  <TableCell>{score.date}</TableCell>
-                  <TableCell>{score.user}</TableCell>
-                  <TableCell>{score.moves}</TableCell>
-                  <TableCell>{score.time}</TableCell>
-                  <TableCell>{score.difficulty}</TableCell>
+                  <TableCell>{score.userName}</TableCell>
+                  <TableCell>{score.score}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
@@ -288,9 +292,9 @@ export default function MemoryPage() {
           })}
         </div>
         {/* Modal de fin de partida */}
-        {showEnd && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30">
-            <div className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md flex flex-col gap-6 items-center animate-in fade-in">
+        <Dialog open={showEnd} onOpenChange={setShowEnd}>
+          <DialogContent>
+            <div className="flex flex-col gap-6 items-center animate-in fade-in">
               <h2 className="text-3xl font-bold text-center">¡Juego Terminado!</h2>
               <div className="w-full bg-slate-50 rounded-xl p-4 flex flex-col items-center">
                 <span className="font-semibold text-lg mb-2">Tu Puntuación</span>
@@ -305,17 +309,6 @@ export default function MemoryPage() {
                   </div>
                 </div>
               </div>
-              <div className="w-full bg-slate-50 rounded-xl p-4">
-                <span className="font-semibold text-lg block mb-2">Historial de Puntuaciones</span>
-                <div className="flex flex-col gap-2">
-                  {scores.map((score, i) => (
-                    <div key={i} className="flex items-center gap-2 bg-white rounded-lg px-3 py-2 text-sm shadow border">
-                      <span className="text-xs text-muted-foreground w-24">{score.date}</span>
-                      <span className="flex-1">Movimientos: <b>{score.moves}</b>, Tiempo: <b>{score.time}</b>, Dificultad: <b>{score.difficulty}</b></span>
-                    </div>
-                  ))}
-                </div>
-              </div>
               <div className="w-full bg-slate-50 rounded-xl p-4 flex flex-col gap-3 items-center">
                 <span className="font-semibold text-lg">Selecciona Dificultad</span>
                 <ToggleGroup
@@ -328,9 +321,7 @@ export default function MemoryPage() {
                     <ToggleGroupItem
                       key={opt.value}
                       value={opt.value}
-                      variant={difficulty === opt.value ? "outline" : "default"}
-                      size="lg"
-                      className="flex-1 py-3 px-0 rounded-xl text-base shadow-sm border-2 data-[state=on]:border-blue-600 data-[state=on]:bg-blue-50"
+                      className={`flex-1 py-3 px-0 rounded-xl text-base shadow-sm border-2 ${difficulty === opt.value ? "border-blue-600 bg-blue-50" : ""}`}
                     >
                       {opt.label}
                     </ToggleGroupItem>
@@ -339,8 +330,8 @@ export default function MemoryPage() {
               </div>
               <Button className="w-full mt-2 text-lg py-6 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold" onClick={() => { setShowEnd(false); shuffleCards(); setMoves(0); setTimer(0); setIsRunning(false); }}>Jugar de Nuevo</Button>
             </div>
-          </div>
-        )}
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );

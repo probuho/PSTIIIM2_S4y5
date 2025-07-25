@@ -4,6 +4,7 @@
   "version": "0.0.1",
   "type": "module",
   "scripts": {
+    "seed": "cd server && npx dotenv-cli -e .env -- ts-node src/seed.ts",
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
