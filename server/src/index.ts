@@ -8,7 +8,8 @@ import router from "./routes";
 
 dotenv.config();
 
-const { API_PORT } = process.env;
+// CAMBIO AQUÍ: Usar process.env.PORT en lugar de process.env.API_PORT
+const PORT = process.env.PORT || 4001; 
 
 const app = express();
 app.use(express.json());
@@ -19,6 +20,8 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cors());
 app.use(router);
 
-app.listen(Number(API_PORT) || 4001, "0.0.0.0", () => {
-  console.log(`Server running on port ${API_PORT}`);
+// CAMBIO AQUÍ: Usar la constante PORT y solo el puerto (Render manejará el host)
+app.listen(Number(PORT), "0.0.0.0", () => {
+    console.log(`Server running on port ${PORT}`);
 });
+
