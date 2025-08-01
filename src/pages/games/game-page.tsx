@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { Trophy, Medal, Crown, User } from 'lucide-react';
+import { Trophy, Medal, Crown, User, AlertCircle } from 'lucide-react';
 import { games } from "./data";
 import { useTopScores } from "@/hooks/useTopScores";
 
@@ -75,7 +75,7 @@ export default function GamePage() {
   const [openModal, setOpenModal] = useState<string | null>(null);
   // Estado para el juego seleccionado en el top (por defecto "Memoria")
   const [selectedGame, setSelectedGame] = useState("Memoria");
-  const { scores, loading } = useTopScores(selectedGame, 5);
+  const { scores, loading, error } = useTopScores(selectedGame, 5);
 
   return (
     <div className="flex flex-col gap-8 p-6 max-w-5xl mx-auto">
@@ -168,11 +168,22 @@ export default function GamePage() {
           <TableBody>
             {loading ? (
               <TableRow>
-                <TableCell colSpan={5} className="text-center">Cargando...</TableCell>
+                <TableCell colSpan={5} className="text-center">Cargando puntuaciones...</TableCell>
+              </TableRow>
+            ) : error ? (
+              <TableRow>
+                <TableCell colSpan={5} className="text-center text-red-600">
+                  <div className="flex items-center justify-center gap-2">
+                    <AlertCircle className="w-4 h-4" />
+                    {error}
+                  </div>
+                </TableCell>
               </TableRow>
             ) : scores.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={5} className="text-center">No hay puntajes aún.</TableCell>
+                <TableCell colSpan={5} className="text-center text-muted-foreground">
+                  No hay puntuaciones registradas para {selectedGame} aún.
+                </TableCell>
               </TableRow>
             ) : (
               scores.map((item, idx) => (
@@ -183,10 +194,10 @@ export default function GamePage() {
                      idx === 2 ? <Trophy className="text-amber-700 w-6 h-6 mx-auto" /> :
                      <User className="text-blue-400 w-5 h-5 mx-auto" />}
                   </TableCell>
-                  <TableCell>{item.userName}</TableCell>
+                  <TableCell className="font-medium">{item.userName}</TableCell>
                   <TableCell>{item.game}</TableCell>
-                  <TableCell className="font-bold text-blue-700">{item.score}</TableCell>
-                  <TableCell>{item.date?.slice(0, 10)}</TableCell>
+                  <TableCell className="font-bold text-blue-700">{item.score.toLocaleString()}</TableCell>
+                  <TableCell>{item.date}</TableCell>
                 </TableRow>
               ))
             )}

@@ -16,6 +16,8 @@ import carta9 from "@/assets/cartas/carta_9.webp";
 import carta10 from "@/assets/cartas/carta_10.webp";
 import reverse from "@/assets/cartas/carta_reverso.webp";
 import { useSession } from "@/components/context/auth-context";
+import { useGameScore } from "@/hooks/useGameScore";
+import { useTopScores } from "@/hooks/useTopScores";
 import { toast } from "sonner";
 
 // Tipos y símbolos
@@ -24,9 +26,9 @@ const allSymbols = [
 ];
 
 const difficultyOptions = [
-  { value: "easy", label: "Fácil", size: 4 },
-  { value: "normal", label: "Normal", size: 6 },
-  { value: "hard", label: "Difícil", size: 8 },
+  { value: "facil", label: "Fácil", size: 4 },
+  { value: "medio", label: "Normal", size: 6 },
+  { value: "dificil", label: "Difícil", size: 8 },
 ];
 
 type CardType = {
@@ -38,6 +40,7 @@ type CardType = {
 type Score = {
   userName: string;
   score: number;
+  date: string;
 };
 
 function getNowDate() {
@@ -52,7 +55,10 @@ function formatTime(sec: number) {
 
 export default function MemoryPage() {
   const { session } = useSession();
-  const [difficulty, setDifficulty] = React.useState("easy");
+  const { saveMemoryScore, loading: savingScore } = useGameScore();
+  const { scores: topScores, loading: loadingScores, error: scoresError } = useTopScores("Memoria", 5);
+  
+  const [difficulty, setDifficulty] = React.useState("facil");
   const [cards, setCards] = React.useState<CardType[]>([]);
   const [selected, setSelected] = React.useState<CardType[]>([]);
   const [disabled, setDisabled] = React.useState(false);
@@ -62,83 +68,63 @@ export default function MemoryPage() {
   const [timer, setTimer] = React.useState(0);
   const [isRunning, setIsRunning] = React.useState(false);
   const [showEnd, setShowEnd] = React.useState(false);
-  // Top 5 global desde backend
-  const [topScores, setTopScores] = React.useState<Score[]>([]);
 
   // Lógica de dificultad
   const getSymbolsForDifficulty = () => {
-    if (difficulty === "easy") return allSymbols.slice(0, 8); // 8 pares
-    if (difficulty === "normal") return allSymbols.slice(0, 9); // 9 pares (18 cartas)
-    if (difficulty === "hard") return allSymbols.slice(0, 10); // 10 pares (20 cartas)
+    if (difficulty === "facil") return allSymbols.slice(0, 8); // 8 pares
+    if (difficulty === "medio") return allSymbols.slice(0, 9); // 9 pares (18 cartas)
+    if (difficulty === "dificil") return allSymbols.slice(0, 10); // 10 pares (20 cartas)
     return allSymbols.slice(0, 8);
   };
 
   const getBoardSize = () => {
-    if (difficulty === "easy") return 4;
-    if (difficulty === "normal") return 6;
-    if (difficulty === "hard") return 8;
+    if (difficulty === "facil") return 4;
+    if (difficulty === "medio") return 6;
+    if (difficulty === "dificil") return 8;
     return 4;
   };
 
-
-  // Obtener top 5 real desde backend
-  React.useEffect(() => {
-    fetch("/api/games/memory/top")
-      .then((res) => res.json())
-      .then((data) => {
-        if (Array.isArray(data)) {
-          setTopScores(data);
-        }
-      })
-      .catch(() => {
-        setTopScores([]);
-      });
-  }, []);
-
-
-
   // Timer funcional
   React.useEffect(() => {
-    let interval: any;
+    let interval: NodeJS.Timeout;
     if (isRunning) {
-      interval = setInterval(() => setTimer((t) => t + 1), 1000);
+      interval = setInterval(() => {
+        setTimer((prev) => prev + 1);
+      }, 1000);
     }
     return () => clearInterval(interval);
   }, [isRunning]);
 
+  // Verificar si el juego terminó
   React.useEffect(() => {
-    shuffleCards();
-    setMoves(0);
-    setTimer(0);
-    setIsRunning(false);
-    setShowEnd(false);
-  }, [difficulty]);
-
-  React.useEffect(() => {
-    if (matches === getSymbolsForDifficulty().length) {
+    if (matches > 0 && matches === getSymbolsForDifficulty().length) {
       setIsRunning(false);
       setShowEnd(true);
-      // Guardar puntaje en backend
-      const userName = session?.user?.nickname || "Anónimo";
-      const userId = session?.user?.id || null;
-      const score = Math.max(0, 200 - moves * 2 - timer); // Ejemplo de cálculo de score
-      fetch("/api/games/memory/score", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId, userName, score }),
-      })
-        .then(() => {
-          // Refrescar el top 5 después de guardar
-          fetch("/api/games/memory/top")
-            .then((res) => res.json())
-            .then((data) => {
-              if (Array.isArray(data)) setTopScores(data);
-            });
-        });
-      toast.success("¡Felicidades! Has completado el juego de memoria.");
+      
+      // Guardar puntaje usando la nueva API
+      const saveScore = async () => {
+        try {
+          const userName = session?.user?.nickname || "Anónimo";
+          const userId = session?.user?.id || undefined;
+          
+          await saveMemoryScore({
+            userId,
+            userName,
+            movimientos: moves,
+            tiempo: timer,
+            dificultad: difficulty,
+          });
+          
+          toast.success("¡Felicidades! Has completado el juego de memoria.");
+        } catch (error) {
+          console.error("Error al guardar puntuación:", error);
+          toast.error("Error al guardar la puntuación");
+        }
+      };
+      
+      saveScore();
     }
-    // eslint-disable-next-line
-  }, [matches]);
+  }, [matches, moves, timer, difficulty, session, saveMemoryScore]);
 
   const shuffleCards = () => {
     const symbols = getSymbolsForDifficulty();
@@ -153,6 +139,10 @@ export default function MemoryPage() {
     setCards(shuffled);
     setSelected([]);
     setMatches(0);
+    setMoves(0);
+    setTimer(0);
+    setIsRunning(false);
+    setShowEnd(false);
   };
 
   const handleClick = (card: CardType) => {
@@ -217,128 +207,92 @@ export default function MemoryPage() {
           </div>
         </div>
         <div>
-          <Label className="text-md mb-2">Top 5 Global (Memoria)</Label>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Usuario</TableHead>
-                <TableHead>Puntaje</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {topScores.length === 0 && (
-                <TableRow>
-                  <TableCell colSpan={2}>No hay datos</TableCell>
-                </TableRow>
-              )}
-              {topScores.map((score, i) => (
-                <TableRow key={i}>
-                  <TableCell>{score.userName}</TableCell>
-                  <TableCell>{score.score}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </div>
-      </div>
-      {/* Tablero y controles */}
-      <div className="flex-1 flex flex-col items-center justify-start md:justify-center w-full h-full">
-        <div className="flex items-center justify-between w-full max-w-5xl mb-4">
-          <Label className="text-2xl">Juego de Memoria de Vida Silvestre</Label>
-          <div className="flex items-center gap-4">
-            <label className="flex items-center gap-1 text-sm">
-              <input
-                type="checkbox"
-                checked={autoFit}
-                onChange={() => setAutoFit((v) => !v)}
-                className="accent-blue-600"
-              />
-              Ajustar tablero automáticamente
-            </label>
-            <Button onClick={shuffleCards}>Reiniciar</Button>
+          <Label className="text-md">Progreso</Label>
+          <div className="flex justify-between mt-2 text-sm">
+            <span>Pares encontrados: <span className="font-bold text-green-700">{matches}</span></span>
+            <span>Total: <span className="font-bold text-gray-700">{getSymbolsForDifficulty().length}</span></span>
           </div>
         </div>
+        <Button onClick={shuffleCards} className="w-full py-3">
+          Nuevo Juego
+        </Button>
+        
+        {/* Top 5 puntuaciones */}
+        <div className="mt-4">
+          <Label className="text-md mb-2">Top 5 Puntuaciones</Label>
+          <div className="bg-gray-50 rounded-lg p-3 max-h-48 overflow-y-auto">
+            {loadingScores ? (
+              <div className="text-center text-sm text-gray-500">Cargando...</div>
+            ) : scoresError ? (
+              <div className="text-center text-sm text-red-500">{scoresError}</div>
+            ) : topScores.length === 0 ? (
+              <div className="text-center text-sm text-gray-500">No hay puntuaciones aún</div>
+            ) : (
+              <div className="space-y-2">
+                {topScores.map((score, i) => (
+                  <div key={i} className="flex justify-between text-sm">
+                    <span className="font-medium">{score.userName}</span>
+                    <span className="font-bold text-blue-700">{score.score.toLocaleString()}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Tablero de juego */}
+      <div className="flex-1 flex flex-col items-center justify-center">
         <div
-          className={`grid bg-white/90 rounded-2xl shadow-lg p-6 gap-6 w-full max-w-5xl mx-auto h-full ${
-            autoFit ? "" : "min-h-[600px]"
-          }`}
+          className="grid gap-2 p-4 bg-white/90 rounded-2xl shadow-lg"
           style={{
-            gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))`,
-            gridTemplateRows: `repeat(${rows}, minmax(0, 1fr))`,
-            height: autoFit ? "100%" : undefined,
-            alignContent: "center",
-            justifyContent: "center",
+            gridTemplateColumns: `repeat(${columns}, 1fr)`,
+            maxWidth: "100%",
+            maxHeight: "100%",
           }}
         >
-          {cards.map((card) => {
-            const isFlipped = selected.includes(card) || card.matched;
-            return (
-              <div key={card.id} className="flex items-center justify-center w-full h-full">
-                <div
-                  className={`flex items-center justify-center transition-all duration-300 cursor-pointer select-none bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden aspect-square ${
-                    isFlipped ? "ring-2 ring-blue-400" : "hover:ring-2 hover:ring-blue-200"
-                  }`}
-                  style={{ width: "100%", height: "100%", maxWidth: 120, maxHeight: 120 }}
-                  onClick={() => handleClick(card)}
-                >
-                  {isFlipped ? (
-                    <img src={card.symbol} className="object-contain w-5/6 h-5/6" />
-                  ) : (
-                    <img src={reverse} className="object-contain w-5/6 h-5/6" />
-                  )}
-                </div>
-              </div>
-            );
-          })}
+          {cards.map((card) => (
+            <button
+              key={card.id}
+              onClick={() => handleClick(card)}
+              disabled={disabled || card.matched}
+              className={`w-16 h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 rounded-xl shadow-md transition-all duration-300 ${
+                card.matched
+                  ? "opacity-50 cursor-not-allowed"
+                  : selected.some((c) => c.id === card.id)
+                  ? "scale-95"
+                  : "hover:scale-105"
+              }`}
+              style={{
+                backgroundImage: `url(${
+                  card.matched || selected.some((c) => c.id === card.id)
+                    ? card.symbol
+                    : reverse
+                })`,
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+              }}
+            />
+          ))}
         </div>
-        {/* Modal de fin de partida */}
-        <Dialog open={showEnd} onOpenChange={setShowEnd}>
-          <DialogContent>
-            <div className="flex flex-col gap-6 items-center animate-in fade-in">
-              <h2 className="text-3xl font-bold text-center">¡Juego Terminado!</h2>
-              <div className="w-full bg-slate-50 rounded-xl p-4 flex flex-col items-center">
-                <span className="font-semibold text-lg mb-2">Tu Puntuación</span>
-                <div className="flex justify-center gap-12 text-xl">
-                  <div>
-                    Movimientos:<br />
-                    <span className="font-bold text-blue-700 text-3xl">{moves}</span>
-                  </div>
-                  <div>
-                    Tiempo:<br />
-                    <span className="font-bold text-blue-700 text-3xl">{formatTime(timer)}</span>
-                  </div>
-                </div>
-              </div>
-              <div className="w-full bg-slate-50 rounded-xl p-4 flex flex-col gap-3 items-center">
-                <span className="font-semibold text-lg">Selecciona Dificultad</span>
-                <ToggleGroup
-                  type="single"
-                  value={difficulty}
-                  onValueChange={(v) => v && setDifficulty(v)}
-                  className="w-full gap-4"
-                >
-                  {difficultyOptions.map((opt) => (
-                    <ToggleGroupItem
-                      key={opt.value}
-                      value={opt.value}
-                      className={`flex-1 py-3 px-0 rounded-xl text-base shadow-sm border-2 ${difficulty === opt.value ? "border-blue-600 bg-blue-50" : ""}`}
-                    >
-                      {opt.label}
-                    </ToggleGroupItem>
-                  ))}
-                </ToggleGroup>
-              </div>
-              <Button className="w-full mt-2 text-lg py-6 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold" onClick={() => { setShowEnd(false); shuffleCards(); setMoves(0); setTimer(0); setIsRunning(false); }}>Jugar de Nuevo</Button>
-              <Button
-                className="w-full text-lg py-3 rounded-xl bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold"
-                onClick={() => setShowEnd(false)}
-              >
-                Cerrar
-              </Button>
-            </div>
-          </DialogContent>
-        </Dialog>
       </div>
+
+      {/* Modal de fin de juego */}
+      <Dialog open={showEnd} onOpenChange={setShowEnd}>
+        <DialogContent>
+          <div className="text-center">
+            <Label className="text-2xl font-bold mb-4">¡Juego Completado!</Label>
+            <div className="space-y-2 mb-6">
+              <p>Movimientos: <span className="font-bold">{moves}</span></p>
+              <p>Tiempo: <span className="font-bold">{formatTime(timer)}</span></p>
+              <p>Dificultad: <span className="font-bold capitalize">{difficulty}</span></p>
+            </div>
+            <Button onClick={() => setShowEnd(false)} className="w-full">
+              Continuar
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

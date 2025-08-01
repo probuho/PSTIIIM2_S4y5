@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { API_ENDPOINTS } from "../lib/config";
 
 export type GameScore = {
   userName: string;
@@ -10,35 +11,28 @@ export type GameScore = {
 export function useTopScores(game: string, limit = 5) {
   const [scores, setScores] = useState<GameScore[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     setLoading(true);
-    if (game === "Memoria") {
-      fetch(`/api/games/memory/top`)
-        .then(res => res.json())
-        .then(data => {
-          // El backend retorna un array de scores
-          setScores(
-            (Array.isArray(data) ? data : []).map((s: any) => ({
-              userName: s.userName,
-              game: s.game,
-              score: s.score,
-              date: s.date || "",
-            }))
-          );
-          setLoading(false);
-        })
-        .catch(() => setLoading(false));
-    } else {
-      fetch(`/api/games/top-scores?game=${encodeURIComponent(game)}&limit=${limit}`)
-        .then(res => res.json())
-        .then(data => {
-          setScores(data.scores || []);
-          setLoading(false);
-        })
-        .catch(() => setLoading(false));
-    }
+    setError(null);
+    
+    fetch(API_ENDPOINTS.GAMES_TOP(game) + `?limit=${limit}`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          setScores(data.data || []);
+        } else {
+          setError(data.error || "Error al cargar puntuaciones");
+        }
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error("Error fetching top scores:", err);
+        setError("Error de conexión");
+        setLoading(false);
+      });
   }, [game, limit]);
 
-  return { scores, loading };
+  return { scores, loading, error };
 } 

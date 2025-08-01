@@ -3,11 +3,19 @@ import gamesController from "../controllers/games-controller";
 
 const router = Router();
 
+// GET /api/games/top/:game - Obtener top scores por juego
+router.get("/top/:game", gamesController.getTopScores);
 
-// GET /api/games/memory/top
-router.get("/memory/top", gamesController.getTopMemoryScores);
+// GET /api/games/stats - Obtener estadísticas generales
+router.get("/stats", gamesController.getGameStats);
 
-// POST /api/games/memory/score
+// GET /api/games/user/:userId - Obtener puntuaciones de un usuario
+router.get("/user/:userId", gamesController.getUserScores);
+
+// POST /api/games/memory/score - Guardar puntuación de memoria
 router.post("/memory/score", gamesController.saveMemoryScore);
+
+// POST /api/games/crossword/score - Guardar puntuación de crucigrama
+router.post("/crossword/score", gamesController.saveCrosswordScore);
 
 export default router;
