@@ -24,6 +24,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useSession, type User } from "@/components/context/auth-context";
 import FormError from "@/components/error-form";
 import axios from "axios";
+import { API_ENDPOINTS } from "../../lib/config";
 
 const LoginSchema = z.object({
   email: z.string().email(),
@@ -70,7 +71,7 @@ export function LoginForm({
   const onSubmit = (values: z.infer<typeof LoginSchema>) => {
     startTransition(async () => {
       try {
-        const response = await axios.post(`http://localhost:4000/signIn`, {
+        const response = await axios.post(API_ENDPOINTS.SIGN_IN, {
           email: values.email,
           password: values.password,
         });

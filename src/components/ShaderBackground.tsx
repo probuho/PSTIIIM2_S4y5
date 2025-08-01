@@ -142,7 +142,7 @@ void main(void) {
         // Uniforms
         const resolution = gl.getUniformLocation(program, "resolution");
         const time = gl.getUniformLocation(program, "time");
-        gl.uniform2f(resolution, canvas.width, canvas.height);
+        gl.uniform2f(resolution, canvas!.width, canvas!.height);
         gl.uniform1f(time, (Date.now() - startTime) * 0.001);
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
         animationId = requestAnimationFrame(render);

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { API_ENDPOINTS } from "../../lib/config";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
@@ -57,7 +58,7 @@ export default function SpeciesPage() {
     setLoading(true);
     setError("");
     try {
-      let url = `http://localhost:5000/api/species?limit=100`;
+      let url = `${API_ENDPOINTS.SPECIES}?limit=100`;
       if (selected !== "Todos") url += `&categoria=${encodeURIComponent(selected)}`;
       if (status.length > 0) url += status.map(st => `&estadoConservacion=${encodeURIComponent(st)}`).join("");
       const res = await fetch(url);
@@ -91,7 +92,7 @@ export default function SpeciesPage() {
     setFormError("");
     setFormSuccess("");
     try {
-      const res = await fetch("http://localhost:5000/api/species", {
+      const res = await fetch(API_ENDPOINTS.SPECIES, {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${localStorage.getItem("accessToken") || ""}` },
         body: JSON.stringify(data),

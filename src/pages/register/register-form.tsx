@@ -25,6 +25,7 @@ import { useSession } from "@/components/context/auth-context";
 import { toast } from "sonner";
 import FormError from "@/components/error-form";
 import axios from "axios";
+import { API_ENDPOINTS } from "../../lib/config";
 
 const RegisterSchema = z.object({
   name: z.string().min(1),
@@ -67,7 +68,7 @@ export function RegisterForm({
   const onSubmit = (values: z.infer<typeof RegisterSchema>) => {
     startTransition(async () => {
       try {
-        const response = await axios.post(`http://localhost:4000/signUp`, {
+        const response = await axios.post(API_ENDPOINTS.SIGN_UP, {
           nombre: values.name,
           apellido: values.surname,
           nickname: values.nickname,

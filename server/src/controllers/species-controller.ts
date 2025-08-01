@@ -78,7 +78,7 @@ export class SpeciesController {
         res.status(400).json({
           success: false,
           message: "ID inválido",
-          errors: validation.error.errors
+          errors: validation.error.issues
         });
         return;
       }
@@ -115,7 +115,7 @@ export class SpeciesController {
         res.status(400).json({
           success: false,
           message: "Parámetros de búsqueda inválidos",
-          errors: validation.error.errors
+          errors: validation.error.issues
         });
         return;
       }
@@ -187,7 +187,7 @@ export class SpeciesController {
         res.status(400).json({
           success: false,
           message: "Datos inválidos",
-          errors: validation.error.errors
+          errors: validation.error.issues
         });
         return;
       }
@@ -221,7 +221,7 @@ export class SpeciesController {
         res.status(400).json({
           success: false,
           message: "Datos inválidos",
-          errors: validation.error.errors
+          errors: validation.error.issues
         });
         return;
       }
@@ -265,7 +265,7 @@ export class SpeciesController {
         res.status(400).json({
           success: false,
           message: "ID inválido",
-          errors: validation.error.errors
+          errors: validation.error.issues
         });
         return;
       }

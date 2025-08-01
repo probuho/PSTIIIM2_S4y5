@@ -6,10 +6,11 @@
   "scripts": {
     "seed": "cd server && npx dotenv-cli -e .env -- ts-node src/seed.ts",
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "vite build",
     "build:server": "cd server && npm run build",
     "build:client": "npm run build",
     "build:all": "npm run build:client && npm run build:server",
+    "build:render": "npm install --legacy-peer-deps && cd server && npm install --legacy-peer-deps && npm run build",
     "start:prod": "cd server && npm start",
     "lint": "eslint .",
     "preview": "vite preview"
