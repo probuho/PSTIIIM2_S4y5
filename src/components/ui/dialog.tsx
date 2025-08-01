@@ -5,17 +5,42 @@ export function Dialog({ open, onOpenChange, children }: {
   onOpenChange: (open: boolean) => void;
   children: React.ReactNode;
 }) {
+  const overlayRef = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    if (!open) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        onOpenChange(false);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [open, onOpenChange]);
+
   if (!open) return null;
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-      <div className="bg-white rounded-lg shadow-lg p-6 min-w-[300px] max-w-[90vw]">
-        {children}
+    <div
+      ref={overlayRef}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
+      onMouseDown={e => {
+        if (e.target === overlayRef.current) {
+          onOpenChange(false);
+        }
+      }}
+      tabIndex={-1}
+      aria-modal="true"
+      role="dialog"
+    >
+      <div className="relative bg-white rounded-lg shadow-lg p-6 min-w-[300px] max-w-[90vw]">
         <button
-          className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+          className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 text-2xl font-bold"
           onClick={() => onOpenChange(false)}
+          aria-label="Cerrar"
         >
           ×
         </button>
+        {children}
       </div>
     </div>
   );

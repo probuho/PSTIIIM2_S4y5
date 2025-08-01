@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
-import {
-  createSpeciesSchema,
-  updateSpeciesSchema,
+import { 
+  createSpeciesSchema, 
+  updateSpeciesSchema, 
   searchSpeciesSchema,
   getSpeciesByIdSchema,
   CreateSpeciesInput,
@@ -78,8 +78,7 @@ export class SpeciesController {
         res.status(400).json({
           success: false,
           message: "ID inválido",
-          // CAMBIO AQUÍ: de .errors a .issues
-          errors: validation.error.issues
+          errors: validation.error.errors
         });
         return;
       }
@@ -116,8 +115,7 @@ export class SpeciesController {
         res.status(400).json({
           success: false,
           message: "Parámetros de búsqueda inválidos",
-          // CAMBIO AQUÍ: de .errors a .issues
-          errors: validation.error.issues
+          errors: validation.error.errors
         });
         return;
       }
@@ -189,8 +187,7 @@ export class SpeciesController {
         res.status(400).json({
           success: false,
           message: "Datos inválidos",
-          // CAMBIO AQUÍ: de .errors a .issues
-          errors: validation.error.issues
+          errors: validation.error.errors
         });
         return;
       }
@@ -224,8 +221,7 @@ export class SpeciesController {
         res.status(400).json({
           success: false,
           message: "Datos inválidos",
-          // CAMBIO AQUÍ: de .errors a .issues
-          errors: validation.error.issues
+          errors: validation.error.errors
         });
         return;
       }
@@ -269,8 +265,7 @@ export class SpeciesController {
         res.status(400).json({
           success: false,
           message: "ID inválido",
-          // CAMBIO AQUÍ: de .errors a .issues
-          errors: validation.error.issues
+          errors: validation.error.errors
         });
         return;
       }
@@ -307,7 +302,7 @@ export class SpeciesController {
   static async getFeaturedSpecies(req: Request, res: Response) {
     try {
       const featuredSpecies = await prisma.species.findMany({
-        where: {
+        where: { 
           isActive: true,
           OR: [
             { nivelAmenaza: { gte: 4 } }, // Especies en peligro crítico o en peligro
@@ -340,4 +335,4 @@ export class SpeciesController {
       return;
     }
   }
-}
+} 
