@@ -8,6 +8,8 @@ import { Trophy, Medal, Crown, User, AlertCircle } from 'lucide-react';
 import { games } from "./data";
 import { useTopScores } from "@/hooks/useTopScores";
 
+
+
 // Diccionario de detalles de juegos
 const gameDetails: Record<string, { descripcion: string; tutorial: string[]; reglas: string[] }> = {
   "crucigrama": {
@@ -40,32 +42,34 @@ const gameDetails: Record<string, { descripcion: string; tutorial: string[]; reg
       "Tu puntuación depende del tiempo y los movimientos realizados."
     ]
   },
-  "eco-explorer": {
-    descripcion: "Responde preguntas y supera retos para convertirte en un verdadero explorador ecológico. Aprende sobre el medio ambiente y la conservación mientras avanzas por diferentes niveles.",
+  "quiz": {
+    descripcion: "Pon a prueba tus conocimientos sobre el reino animal en este quiz de la naturaleza que te enseña las características de las criaturas que viven en este planeta.",
     tutorial: [
-      "Lee atentamente cada pregunta o reto.",
-      "Selecciona la respuesta correcta o realiza la acción indicada.",
-      "Avanza de nivel al acertar y aprende datos curiosos sobre la naturaleza.",
+      "Lee atentamente cada pregunta.",
+      "Selecciona la respuesta correcta.",
+      "Avanza a la siguiente pregunta y aprende datos curiosos sobre los seres vivos.",
       "Intenta obtener la mayor puntuación posible."
     ],
     reglas: [
       "Tienes un tiempo límite para responder cada pregunta.",
       "Cada respuesta correcta suma puntos, las incorrectas no restan.",
-      "Al finalizar, podrás ver tu puntuación y aprender más sobre los temas tratados."
+      "Al finalizar, podrás ver tu puntuación."
     ]
   },
-  "conservation-simulation": {
-    descripcion: "Simula la gestión de un ecosistema y toma decisiones para proteger la biodiversidad. Descubre cómo tus acciones afectan el equilibrio natural.",
+  "ahorcado": {
+    descripcion: "Descubre que tan bien conoces a las criaturas que cubren este planeta adivinando la especie.",
     tutorial: [
-      "Elige un ecosistema para gestionar.",
-      "Toma decisiones sobre conservación, recursos y especies.",
-      "Observa cómo tus elecciones afectan el ecosistema en tiempo real.",
-      "Aprende sobre el impacto de la conservación y la sostenibilidad."
+      "Ve el largo de las palabras.",
+      "Selecciona una letra.",
+      "Analiza el nombre de que animal encaja en el espacio disponible y con las letras acertadas.",
+      "Memoriza los nombres de los animales.",
+      "La puntuación que consigas al final dependera de cuantas preguntas acertaras y en cuanto tiempo."
     ],
     reglas: [
-      "Cada decisión tiene consecuencias positivas o negativas.",
-      "El objetivo es mantener el equilibrio y la salud del ecosistema.",
-      "Puedes reiniciar la simulación y probar diferentes estrategias."
+      "Hay un límite de tiempo e intentos por dificultad.",
+      "Al seleccionar una letra esta puede o no estar dentro del nombre a adivinar.",
+      "Las letras que están se marca de verde en el teclado virtual y aparecen en el espacio correspondiente, las que no están se marcan de rojo en el teclado.",
+      "Al finalizar la partida se revela la palabra que era y se revela tú puntuación la cual se calcula en base a la dificulta, tiempo y movimientos restantes."
     ]
   }
 };
@@ -147,10 +151,10 @@ export default function GamePage() {
           value={selectedGame}
           onChange={e => setSelectedGame(e.target.value)}
         >
-          <option value="Memoria">Memoria</option>
-          <option value="Crucigrama">Crucigrama</option>
-          <option value="Desafío Eco Explorador">Desafío Eco Explorador</option>
-          <option value="Simulación de Conservación">Simulación de Conservación</option>
+          <option value="Memoria">Memoria animal</option>
+          <option value="Crucigrama">Crucigrama de identificación de especies</option>
+          <option value="Quiz">Desafío eco explorador</option>
+          <option value="Ahorcado">Adivina el animal</option>
         </select>
       </div>
       {/* Tabla de top 5 de usuarios */}

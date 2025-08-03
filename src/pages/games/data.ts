@@ -1,7 +1,7 @@
 export const games = [
   {
     id: "memoria",
-    title: "Memoria",
+    title: "Memoria animal",
     description:
       "Pon a prueba tus habilidades de memoria emparejando tarjetas con especies de vida silvestre",
     icon: "🧠",
@@ -9,26 +9,26 @@ export const games = [
   },
   {
     id: "crucigrama",
-    title: "Crucigrama de Identificación de Especies",
+    title: "Crucigrama de identificación de especies",
     description:
       "Prueba tu capacidad para identificar diferentes especies de animales",
     icon: "🦋",
     link: "/games/crossword",
   },
   {
-    id: "eco-explorer",
-    title: "Desafío Eco Explorer",
+    id: "quiz",
+    title: "Desafío eco explorador",
     description:
-      "Pon a prueba tus conocimientos ambientales y habilidades de conservación en este desafío interactivo",
+      "Pon a prueba tus conocimientos sobre el reino animal en este quiz de la naturaleza",
     icon: "🌍",
-    link: "/games/eco-explorer",
+    link: "/games/quiz",
   },
   {
-    id: "conservation-simulation",
-    title: "Simulación de Conservación",
-    description: "Simula ecosistemas y aprende sobre esfuerzos de conservación",
+    id: "ahorcado",
+    title: "Adivina el animal",
+    description: "Descubre que tan bien conoces a las criaturas que cubren este planeta adivinando la especie",
     icon: "🌱",
-    link: "/games/conservation-sim",
+    link: "/games/hangman",
   },
 ];
 

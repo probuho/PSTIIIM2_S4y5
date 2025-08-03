@@ -9,7 +9,7 @@ import { toast } from "sonner";
 //Componentes del crossword de la librería react-crossword
 import Crossword, { type CrosswordImperative, type CellInput} from '@jaredreisinger/react-crossword';
 
-import listadoPalabrasData from "./listado-palabras.json";
+import listadoPalabrasData from "./crossword-list.json";
 import {
   CrosswordGenerator,
   type PlacedWord,
@@ -19,13 +19,13 @@ import {
 } from "@/components/utils/CrosswordGenerator";
 
 
-// Dificultades
+//Dificultades
 const difficultyOptions = [
   { value: "easy", label: "Fácil", wordCount: 5, multiplier: 1.0, gridSize: 10 },
   { value: "medium", label: "Normal", wordCount: 10, multiplier: 1.2, gridSize: 15 },
   { value: "hard", label: "Difícil", wordCount: 15, multiplier: 1.5, gridSize: 20 },
 ];
-// Puntuacion
+//Puntuacion
 type Score = {
   date: string;
   score: number;
@@ -33,6 +33,7 @@ type Score = {
   user: string;
 };
 
+//Función para la fecha a utilizar en el historial
 function getNowDate() {
   return new Date().toISOString().slice(0, 10);
 }
@@ -82,7 +83,7 @@ export default function CrosswordPage() {
 
     let result: GeneratorResult | null = null;
     let attempts = 0;
-    const MAX_GENERATION_ATTEMPTS = 10; // Limit attempts to prevent infinite loops
+    const MAX_GENERATION_ATTEMPTS = 10; //Limite de intentos para prevenir loops infinitos
 
     while (!result && attempts < MAX_GENERATION_ATTEMPTS) {
       const generator = new CrosswordGenerator(selectedWords, currentDifficulty.gridSize);
@@ -99,7 +100,7 @@ export default function CrosswordPage() {
     console.log("Resultado de generación:", result); */}
     setGenerationResult(result);
 
-    // Reinicio de los estados del juego al generar un nuevo crucigrama
+    //Reinicio de los estados del juego al generar un nuevo crucigrama
     crosswordRef.current?.reset();
     setCurrentScore(0);
     setCorrectWordsGuessed(new Set());
@@ -192,16 +193,16 @@ export default function CrosswordPage() {
   //Carga de las puntuaciones
   const displayedScores = useMemo(() => scores.slice(0, 3), [scores]);
 
-  // Renderizado de las celdas del crucigrama
+  //Renderizado de las celdas del crucigrama
   const renderCustomCell = useCallback((cell: CellInput) => {
-      // Acceso a las palabras seleccionadas (placedWords) desde el estado derivado con el resultado generado
+      //Acceso a las palabras seleccionadas (placedWords) desde el estado derivado con el resultado generado
       if (!crosswordData || !placedWords) return null;
 
-      // Verificacion de si es una celda acertada
+      //Verificacion de si es una celda acertada
       let isCellInCorrectWord = false;
       let correctLetter = '';
 
-      // Loop de todas las palabras acertadas
+      //Loop de todas las palabras acertadas
       for (const wordId of correctWordsGuessed) {
           const [num, dir] = wordId.split('-');
           const direction = dir as 'across' | 'down';
@@ -332,7 +333,7 @@ export default function CrosswordPage() {
       <div className="flex-1 flex flex-col w-full h-full overflow-y-auto">
         {/* Título y boton de reinicio de juego */}
         <div className="flex items-center justify-between w-full max-w-5xl mb-4 self-center md:self-auto px-6 md:px-0">
-          <Label className="text-2xl">Crucigrama de Exploración</Label>
+          <Label className="text-2xl">Crucigrama de identificación de especies</Label>
           <Button onClick={startNewGame}>Reiniciar Juego</Button>
         </div>
 

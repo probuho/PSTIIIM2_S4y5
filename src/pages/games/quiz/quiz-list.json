@@ -1,0 +1,497 @@
+[
+  {
+    "question": "¿Cuál es el animal terrestre más grande del mundo?",
+    "answer": "Elefante africano",
+    "options": ["Jirafa", "Rinoceronte blanco", "Hipopótamo", "Elefante africano"]
+  },
+  {
+    "question": "¿Qué mamífero puede volar?",
+    "answer": "Murciélago",
+    "options": ["Ardilla voladora", "Murciélago", "Colibrí", "Perezoso"]
+  },
+  {
+    "question": "¿Cuál es el pez más rápido del océano?",
+    "answer": "Pez vela",
+    "options": ["Atún", "Tiburón blanco", "Pez espada", "Pez vela"]
+  },
+  {
+    "question": "¿Qué animal es conocido como el 'rey de la selva'?",
+    "answer": "León",
+    "options": ["Tigre", "León", "Gorila", "Jaguar"]
+  },
+  {
+    "question": "¿Qué insecto produce la miel?",
+    "answer": "Abeja",
+    "options": ["Mariposa", "Hormiga", "Avispa", "Abeja"]
+  },
+  {
+    "question": "¿Cuál es el único mamífero que pone huevos?",
+    "answer": "Ornitorrinco",
+    "options": ["Canguro", "Koala", "Ornitorrinco", "Delfín"]
+  },
+  {
+    "question": "¿De qué color es la lengua de una jirafa?",
+    "answer": "Azul oscuro",
+    "options": ["Rosa", "Roja", "Negra", "Azul oscuro"]
+  },
+  {
+    "question": "¿Qué animal tiene las huellas digitales más parecidas a las humanas?",
+    "answer": "Koala",
+    "options": ["Chimpancé", "Koala", "Oso pardo", "Perezoso"]
+  },
+  {
+    "question": "¿Cuál es el animal más ruidoso de la Tierra?",
+    "answer": "Cachalote",
+    "options": ["Gallo", "Ballena azul", "Elefante", "Cachalote"]
+  },
+  {
+    "question": "¿Cuántos corazones tiene un pulpo?",
+    "answer": "Tres",
+    "options": ["Uno", "Dos", "Cuatro", "Tres"]
+  },
+  {
+    "question": "¿Qué ave es conocida por imitar sonidos?",
+    "answer": "Loro",
+    "options": ["Águila", "Búho", "Colibrí", "Loro"]
+  },
+  {
+    "question": "¿Qué animal puede vivir sin cabeza durante una semana?",
+    "answer": "Cucaracha",
+    "options": ["Mosca", "Araña", "Cucaracha", "Grillo"]
+  },
+  {
+    "question": "¿Qué animal es el más venenoso del mundo?",
+    "answer": "Medusa avispa de mar",
+    "options": ["Serpiente taipán", "Rana dardo dorada", "Medusa avispa de mar", "Escorpión"]
+  },
+  {
+    "question": "¿Qué tipo de animal es un caballito de mar?",
+    "answer": "Pez",
+    "options": ["Mamífero", "Reptil", "Crustáceo", "Pez"]
+  },
+  {
+    "question": "¿Qué animal hiberna durante el invierno?",
+    "answer": "Oso",
+    "options": ["Ciervo", "Ardilla", "Conejo", "Oso"]
+  },
+  {
+    "question": "¿Cuál es el animal que duerme de pie?",
+    "answer": "Caballo",
+    "options": ["Perro", "Gato", "Caballo", "Koala"]
+  },
+  {
+    "question": "¿Qué animal tiene tres ojos?",
+    "answer": "Tuatara",
+    "options": ["Conejo pigmeo", "Tuatara", "Musaraña etrusca", "Murciélago abejorro"]
+  },
+  {
+    "question": "¿Qué animal es el único que no puede saltar?",
+    "answer": "Elefante",
+    "options": ["Hipopótamo", "Rinoceronte", "Elefante", "Cocodrilo"]
+  },
+  {
+    "question": "¿Cuál es el animal con el cuello más largo?",
+    "answer": "Jirafa",
+    "options": ["Avestruz", "Llama", "Jirafa", "Cisne"]
+  },
+  {
+    "question": "¿Qué ave no puede volar?",
+    "answer": "Avestruz",
+    "options": ["Águila", "Colibrí", "Búho", "Avestruz"]
+  },
+  {
+    "question": "¿Cuántas patas tiene una araña?",
+    "answer": "Ocho",
+    "options": ["Seis", "Ocho", "Diez", "Doce"]
+  },
+  {
+    "question": "¿Qué animal tiene sangre azul?",
+    "answer": "Cangrejo de herradura",
+    "options": ["Serpiente", "Cangrejo de herradura", "Tortuga gigante", "Babosa banana"]
+  },
+  {
+    "question": "¿Cuál es el animal más lento del mundo?",
+    "answer": "Perezoso de tres dedos",
+    "options": ["Tortuga gigante", "Perezoso de tres dedos", "Caracol", "Babosa banana"]
+  },
+  {
+    "question": "¿Cuál es el marsupial más grande del mundo?",
+    "answer": "Canguro rojo",
+    "options": ["Dendrogálus", "Canguro rojo", "Perezoso de tres dedos", "Petrogale"]
+  },
+  {
+    "question": "¿Qué animal puede cambiar de color para camuflarse?",
+    "answer": "Camaleón",
+    "options": ["Tortuga", "Serpiente", "Camaleón", "Loro"]
+  },
+  {
+    "question": "¿Qué mamífero terrestre tiene más dientes?",
+    "answer": "Armadillo gigante",
+    "options": ["Armadillo gigante", "Lirón", "Petrogale", "Estornino"]
+  },
+  {
+    "question": "¿Qué animal es el más rápido en el aire?",
+    "answer": "Halcón peregrino",
+    "options": ["Águila real", "Halcón peregrino", "Águila calva", "Colibrí"]
+  },
+  {
+    "question": "¿Cuál es el único marsupial que vive en América del Norte?",
+    "answer": "Zarigüeya",
+    "options": ["Wombat", "Ardilla", "Zarigüeya", "Koala"]
+  },
+  {
+    "question": "¿Qué animal es de suma importancia en la biomedicina?",
+    "answer": "Cangrejo de herradura",
+    "options": ["Quokka", "Lirón", "Cangrejo de herradura", "Musaraña etrusca"]
+  },
+  {
+    "question": "¿Qué animal tiene la mejor memoria?",
+    "answer": "Delfín",
+    "options": ["Oso gris", "Wombat", "Delfín", "Caballo"]
+  },
+  {
+    "question": "¿Qué animal es conocido por tener el caparazón más duro?",
+    "answer": "Tortuga",
+    "options": ["Caracol", "Cangrejo", "Armadillo", "Tortuga"]
+  },
+  {
+    "question": "¿Cuál es el mayor mustélido terrestre?",
+    "answer": "Glotón",
+    "options": ["Serpiente taipán", "Glotón", "Medusa avispa de mar", "Koala"]
+  },
+  {
+    "question": "¿Qué animal es el más grande del océano?",
+    "answer": "Ballena azul",
+    "options": ["Tiburón ballena", "Cachalote", "Ballena azul", "Orca"]
+  },
+  {
+    "question": "¿Qué animal tiene la esperanza de vida más larga?",
+    "answer": "Esponjas vítreas",
+    "options": ["Ballena boreal", "Tortuga gigante", "Esponjas vítreas", "Tiburón de Groenlandia"]
+  },
+  {
+    "question": "¿Qué animal tiene el corazón más grande?",
+    "answer": "Ballena azul",
+    "options": ["Elefante", "Jirafa", "Ballena azul", "Hipopótamo"]
+  },
+  {
+    "question": "¿Qué animal tiene el cerebro más grande?",
+    "answer": "Cachalote",
+    "options": ["Ballena azul", "Elefante", "Delfín", "Cachalote"]
+  },
+  {
+    "question": "¿Qué animal tiene el olfato más agudo?",
+    "answer": "Oso polar",
+    "options": ["Perro", "Oso polar", "Elefante", "Rata"]
+  },
+  {
+    "question": "¿Qué animal tiene la vista más aguda?",
+    "answer": "Águila",
+    "options": ["Halcón", "Gato", "Búho", "Águila"]
+  },
+  {
+    "question": "¿Qué animal es el más alto del mundo?",
+    "answer": "Jirafa",
+    "options": ["Elefante", "Avestruz", "Rinoceronte", "Jirafa"]
+  },
+  {
+    "question": "¿Qué animal tiene el mayor número de dientes?",
+    "answer": "Caracol",
+    "options": ["Tiburón", "Cocodrilo", "Caracol", "Pez gato"]
+  },
+  {
+    "question": "¿Qué animal puede vivir hasta 500 años?",
+    "answer": "Tiburón de Groenlandia",
+    "options": ["Tortuga gigante", "Ballena boreal", "Tiburón de Groenlandia", "Almeja quahog"]
+  },
+  {
+    "question": "¿Cuál es el roedor más grande del mundo?",
+    "answer": "Capibara",
+    "options": ["Capibara", "Rata", "Ardilla voladora", "Colibrí"]
+  },
+  {
+    "question": "¿Cuál es el animal que más dientes produce a lo largo de su vida?",
+    "answer": "Tiburón blanco",
+    "options": ["Ubraculum Ubraculum", "Tiburón blanco", "Delfín rosado", "Petauro del azúcar"]
+  },
+  {
+    "question": "¿Qué animal es famoso por ser un constructor nato?",
+    "answer": "Castor",
+    "options": ["Pájaro tejedor", "Castor", "Gecko", "Termita"]
+  },
+  {
+    "question": "¿Cuál es el animal que tiene el color de sangre verde?",
+    "answer": "Lagarto de cola de látigo",
+    "options": ["Ubraculum Ubraculum", "Gecko", "Lagarto de cola de látigo", "Caracol"]
+  },
+  {
+    "question": "¿Qué animal tiene un pliegue de piel en su axila que usa como bolsillo?",
+    "answer": "Nutria marina",
+    "options": ["Nutria marina", "Ornitorrinco", "Marmota", "Walabí"]
+  },
+  {
+    "question": "¿Cuál es el único mamífero que puede respirar debajo del agua?",
+    "answer": "Delfín",
+    "options": ["Foca", "Nutria", "Delfín", "Ballena"]
+  },
+  {
+    "question": "¿Qué animal es conocido por tener el canto más largo?",
+    "answer": "Ballena jorobada",
+    "options": ["Gorila", "Ballena jorobada", "Elefante", "León"]
+  },
+  {
+    "question": "¿Qué ave carroñera tiene un mayor contenido de ácido en su estómago, haciéndola inmune a la intoxicación alimentaria?",
+    "answer": "Buitre",
+    "options": ["Cuervo", "Milano", "Buitre", "Cóndor"]
+  },
+  {
+    "question": "¿Qué animal tiene las orejas más grandes en relación a su cuerpo?",
+    "answer": "Jerbo orejudo",
+    "options": ["Conejo pigmeo", "Jerbo orejudo", "Fénec", "Elefante africano"]
+  },
+  {
+    "question": "¿Cuál es el cánido más pequeño?",
+    "answer": "Fénec",
+    "options": ["Coyote", "Aguará guazú", "Zorro rojo", "Perro mapache"]
+  },
+  {
+    "question": "¿Cuál es la especie de oso más pequeña del mundo?",
+    "answer": "Oso malayo",
+    "options": ["Oso polar", "Oso malayo", "Oso andino", "Oso pardo"]
+  },
+  {
+    "question": "¿Qué animal tiene la lengua más larga en relación con su cuerpo?",
+    "answer": "Camaleón",
+    "options": ["Hormiguero", "Camaleón", "Serpiente", "Jirafa"]
+  },
+  {
+    "question": "¿Qué animal tiene la lengua más larga?",
+    "answer": "Hormiguero",
+    "options": ["Hormiguero", "Cobra", "Jirafa", "Camaleón"]
+  },
+  {
+    "question": "¿Qué animal tiene la piel más gruesa?",
+    "answer": "Cachalote",
+    "options": ["Cocodrilo", "Rinoceronte", "Cachalote", "Hipopótamo"]
+  },
+  {
+    "question": "¿Qué animal es conocido por su gran inteligencia?",
+    "answer": "Delfín",
+    "options": ["Chimpancé", "Elefante", "Delfín", "Cuervo"]
+  },
+  {
+    "question": "¿Qué mamífero pequeño es intolerante a la lactosa?",
+    "answer": "Erizo",
+    "options": ["Erizo", "Jerbo orejudo", "Conejo pigmeo", "Murciélago abejorro"]
+  },
+  {
+    "question": "¿Qué criatura tiene el récord de ser el animal que más ha vivido en cautiverio?",
+    "answer": "Tortuga gigante",
+    "options": ["Elefante", "Tortuga gigante", "Gorila", "Loro"]
+  },
+  {
+    "question": "¿Qué animal posee rayas con un patrón único similar a las huellas dactilares?",
+    "answer": "Cebra",
+    "options": ["Ligre", "Tamia", "Cebra", "Okapi"]
+  },
+  {
+    "question": "¿Qué animal posee el ADN más parecido al humano?",
+    "answer": "Chimpancé",
+    "options": ["Chimpancé", "Gorila", "Gato", "Mono capuchino"]
+  },
+  {
+    "question": "¿Cuál es el nombre de la única serpiente venenosa en el Reino Unido?",
+    "answer": "Víbora común",
+    "options": ["Anaconda", "Culebra de collar", "Culebra lisa", "Víbora común"]
+  },
+  {
+    "question": "¿Qué animal tiene una cola prensil?",
+    "answer": "Mono araña",
+    "options": ["Koala", "Canguro", "Mono araña", "Mapache"]
+  },
+  {
+    "question": "¿Qué animal tiene el récord de ser el animal que más ha viajado en el espacio?",
+    "answer": "Tortuga",
+    "options": ["Perro", "Gato", "Mono", "Tortuga"]
+  },
+  {
+    "question": "¿Cuál es el felino más grande de América?",
+    "answer": "Jaguar",
+    "options": ["Ocelote", "Gato montés", "Jaguar", "Puma"]
+  },
+  {
+    "question": "¿Qué animal usa el escupir como advertencia a otros miembros de la misma especie?",
+    "answer": "Llama",
+    "options": ["Llama", "Jirafa", "Murciélago", "Oveja"]
+  },
+  {
+    "question": "¿Qué animal es conocido por tener el 'baile del apareamiento' más complicado?",
+    "answer": "Ave del paraíso",
+    "options": ["Pavo real", "Loro", "Pato", "Ave del paraíso"]
+  },
+  {
+    "question": "¿Qué criatura submarina puede regenerar todo su cuerpo solo a partir de una de sus extremidades?",
+    "answer": "Estrella de mar",
+    "options": ["Medusa", "Caballito de mar", "Estrella de mar", "Anémona"]
+  },
+  {
+    "question": "¿Qué ave recorre más de 70.000 kilómetros durante su migración?",
+    "answer": "Charrán ártico",
+    "options": ["Colibrí de cola ancha", "Charrán ártico", "Chipe amarillo", "Garza blanca"]
+  },
+  {
+    "question": "¿Cuál es el lagarto más grande?",
+    "answer": "Dragón de Komodo",
+    "options": ["Varano cocodrilo", "Dragón de Komodo", "Varano gigante australiano", "Iguana azul"]
+  },
+  {
+    "question": "¿Qué animal es conocido por su 'baile de la muerte'?",
+    "answer": "Araña viuda negra",
+    "options": ["Escorpión", "Araña viuda negra", "Serpiente", "Medusa"]
+  },
+  {
+    "question": "¿Qué animal puede expulsar sus entrañas para ahuyentar a los depredadores?",
+    "answer": "Pepino de mar",
+    "options": ["Estrella de mar", "Rana amarilla", "Pepino de mar", "Medusa avispa de mar"]
+  },
+  {
+    "question": "¿Qué tipo de búho es el más grande?",
+    "answer": "Búho pescador de Blakiston",
+    "options": ["Búho campestre", "Búho pescador de Blakiston", "Autillo chillón", "Mochuelo de madriguera"]
+  },
+  {
+    "question": "¿Qué perro posee lengua azul?",
+    "answer": "Chow chow",
+    "options": ["Pastor alemán", "Poodle", "Pomerania", "Chow chow"]
+  },
+  {
+    "question": "¿Qué animal tiene el salto más alto en comparación a su tamaño?",
+    "answer": "Pulga",
+    "options": ["Saltamontes", "Canguro", "Pulga", "Caracal"]
+  },
+  {
+    "question": "¿Cuál es el ave con la envergadura más grande?",
+    "answer": "Albatros errante",
+    "options": ["Cóndor andino", "Halcón peregrino", "Albatros errante", "Águila calva"]
+  },
+  {
+    "question": "¿Qué animal puede dormir durante tres años sin comer?",
+    "answer": "Caracol",
+    "options": ["Perezoso", "Oso grizzly", "Caracol", "Erizo"]
+  },
+  {
+    "question": "¿Qué mamífero no tiene cuerdas vocales?",
+    "answer": "Perezoso",
+    "options": ["Perezoso", "Ornitorrinco", "Canguro rojo", "Ligre"]
+  },
+  {
+    "question": "¿Qué canino aúlla a la luz de la luna?",
+    "answer": "Lobo",
+    "options": ["Perro", "Coyote", "Zorro", "Lobo"]
+  },
+  {
+    "question": "¿Qué oso tiene pupilas en forma de hendidura vertical, lo que lo hace diferente de otros osos?",
+    "answer": "Panda",
+    "options": ["Oso grizzly", "Oso de agua", "Panda", "Oso polar"]
+  },
+  {
+    "question": "¿En qué animal se encuentra el corazón en la cabeza?",
+    "answer": "Camarón",
+    "options": ["Medusa", "Cucaracha", "Libélula", "Camarón"]
+  },
+  {
+    "question": "¿Qué animal puede imitar casi cualquier sonido?",
+    "answer": "Ave lira",
+    "options": ["Loro", "Perico", "Urraca", "Ave lira"]
+  },
+  {
+    "question": "¿Cuál es el animal más fuerte del mundo?",
+    "answer": "Elefante africano de sabana",
+    "options": ["Ballena azul", "Hormiga", "Oso polar", "Elefante africano de sabana"]
+  },
+  {
+    "question": "¿Cuál es el animal más fuerte en relación a su tamaño?",
+    "answer": "Escarabajo rinoceronte",
+    "options": ["Hormiga", "Escarabajo rinoceronte", "Elefante africano de sabana", "Mantis religiosa"]
+  },
+  {
+    "question": "¿Qué esquivo animal africano es conocido como la 'jirafa del bosque'?",
+    "answer": "Okapi",
+    "options": ["Berrendo", "Antilocáprido", "Corzo", "Okapi"]
+  },
+  {
+    "question": "¿Qué criatura puede vivir sin comida hasta 30 años?",
+    "answer": "Tardígrado",
+    "options": ["Tardígrado", "Caracol", "Medusa", "Pepino de mar"]
+  },
+  {
+    "question": "¿Qué ave puede volar hacia atrás?",
+    "answer": "Colibrí",
+    "options": ["Garza blanca", "Albatros errante", "Colibrí", "Búho campestre"]
+  },
+  {
+    "question": "¿Qué animal tiene dientes naranjas?",
+    "answer": "Nutria",
+    "options": ["Marsupial", "Nutria", "Castor", "Conejo ribereño"]
+  },
+  {
+    "question": "¿Qué mamífero puede durar hasta 22 meses embarazado?",
+    "answer": "Elefante",
+    "options": ["Elefante", "Jirafa", "Okapi", "Chow chow"]
+  },
+  {
+    "question": "¿Cuál es el animal que produce heces cuadradas?",
+    "answer": "Wombat",
+    "options": ["Marsupial", "Berrendo", "Búho pescador de Blakiston", "Wombat"]
+  },
+  {
+    "question": "¿Qué animal puede dormir con una mitad de su cerebro a la vez?",
+    "answer": "Delfín",
+    "options": ["Ballena", "Orca", "Delfín", "Manatí"]
+  },
+  {
+    "question": "¿Qué ave tiene la mayor cantidad de plumas?",
+    "answer": "Pingüino emperador",
+    "options": ["Pavo real", "Cóndor andino", "Cisne común", "Pingüino emperador"]
+  },
+  {
+    "question": "¿Qué animal es conocido por su 'canto de los búhos'?",
+    "answer": "Búho",
+    "options": ["Loro", "Golondrina", "Búho", "Colibrí"]
+  },
+  {
+    "question": "¿Qué mamífero puede producir una secreción tóxica desde sus codos?",
+    "answer": "Loris lento",
+    "options": ["Murciélago vampiro", "Musaraña etrusca", "Loris lento", "Ornitorrinco"]
+  },
+  {
+    "question": "¿Qué insecto puede viajar más de 4000 kilómetros durante su migración?",
+    "answer": "Mariposa monarca",
+    "options": ["Langosta migratoria", "Ortópero", "Mariposa monarca", "Mariquita de siete puntos"]
+  },
+  {
+    "question": "¿Qué criatura terrestre tiene la cola más larga?",
+    "answer": "Jirafa",
+    "options": ["Cocodrilo", "Serpiente taipán", "Dragón de Komodo", "Jirafa"]
+  },
+  {
+    "question": "¿Cuál es el animal más pequeño por peso?",
+    "answer": "Musaraña etrusca",
+    "options": ["Musaraña etrusca", "Tarántula", "Hámster", "Conejo pigmeo"]
+  },
+  {
+    "question": "¿Qué animal es conocido por bailar al ritmo de la flauta?",
+    "answer": "Serpiente",
+    "options": ["Cocodrilo", "Serpiente", "Lagarto", "Tortuga"]
+  },
+  {
+    "question": "¿Qué animal tiene una piel lisa y le gusta saltar?",
+    "answer": "Rana",
+    "options": ["Rana", "Salamandra", "Sapo", "Ajolote"]
+  },
+  {
+    "question": "¿Qué animal tiene una piel rugosa y le gusta saltar?",
+    "answer": "Sapo",
+    "options": ["Rana", "Salamandra", "Sapo", "Ajolote"]
+  }
+]

@@ -10,6 +10,8 @@ import SightingsPage from "./sightings/sightings-page";
 import SightingDetail from "./sightings/sighting-detail";
 import MemoryPage from "./games/memory/memory-page";
 import CrosswordPage from "./games/crossword/crossword-page";
+import QuizPage from "./games/quiz/quiz-page";
+import HangmanPage from "./games/hangman/hangman-page";
 import RoutesPage from "./routes/routes-page";
 import SpeciesPage from "./especies/species-page";
 
@@ -25,6 +27,8 @@ function App() {
           <Route path="/games" element={<GamePage />} />
           <Route path="/games/memory" element={<MemoryPage />} />
           <Route path="/games/crossword" element={<CrosswordPage />} />
+          <Route path="/games/quiz" element={<QuizPage />} />
+          <Route path="/games/hangman" element={<HangmanPage />} />
           <Route path="/routes" element={<RoutesPage />} />
           <Route path="/sightings" element={<SightingsPage />} />
           <Route path="/sightings/:id" element={<SightingDetail />} />
