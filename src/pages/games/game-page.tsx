@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { Trophy, Medal, Crown, User, AlertCircle } from 'lucide-react';
+import { Trophy, Medal, Crown, User, AlertCircle, RefreshCw } from 'lucide-react';
 import { games } from "./data";
 import { useTopScores } from "@/hooks/useTopScores";
 
@@ -79,7 +79,7 @@ export default function GamePage() {
   const [openModal, setOpenModal] = useState<string | null>(null);
   // Estado para el juego seleccionado en el top (por defecto "Memoria")
   const [selectedGame, setSelectedGame] = useState("Memoria");
-  const { scores, loading, error } = useTopScores(selectedGame, 5);
+  const { scores, loading, error, refreshScores } = useTopScores(selectedGame, 5);
 
   return (
     <div className="flex flex-col gap-8 p-6 max-w-5xl mx-auto">
@@ -144,18 +144,30 @@ export default function GamePage() {
         ))}
       </div>
       {/* Selector de juego para el top */}
-      <div className="flex items-center gap-4 mt-10 mb-2">
-        <Label className="text-xl">Top 5 de usuarios en:</Label>
-        <select
-          className="border rounded-lg px-3 py-1 text-base"
-          value={selectedGame}
-          onChange={e => setSelectedGame(e.target.value)}
+      <div className="flex items-center justify-between mt-10 mb-2">
+        <div className="flex items-center gap-4">
+          <Label className="text-xl">Top 5 de usuarios en:</Label>
+          <select
+            className="border rounded-lg px-3 py-1 text-base"
+            value={selectedGame}
+            onChange={e => setSelectedGame(e.target.value)}
+          >
+            <option value="Memoria">Memoria</option>
+            <option value="Crucigrama">Crucigrama</option>
+            <option value="Quiz">Quiz</option>
+            <option value="Ahorcado">Ahorcado</option>
+          </select>
+        </div>
+        <Button 
+          variant="outline" 
+          size="sm" 
+          onClick={refreshScores}
+          disabled={loading}
+          className="flex items-center gap-2"
         >
-          <option value="Memoria">Memoria animal</option>
-          <option value="Crucigrama">Crucigrama de identificación de especies</option>
-          <option value="Quiz">Desafío eco explorador</option>
-          <option value="Ahorcado">Adivina el animal</option>
-        </select>
+          <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+          Actualizar
+        </Button>
       </div>
       {/* Tabla de top 5 de usuarios */}
       <div>
@@ -172,7 +184,12 @@ export default function GamePage() {
           <TableBody>
             {loading ? (
               <TableRow>
-                <TableCell colSpan={5} className="text-center">Cargando puntuaciones...</TableCell>
+                <TableCell colSpan={5} className="text-center">
+                  <div className="flex items-center justify-center gap-2">
+                    <RefreshCw className="w-4 h-4 animate-spin" />
+                    Cargando puntuaciones...
+                  </div>
+                </TableCell>
               </TableRow>
             ) : error ? (
               <TableRow>
@@ -186,7 +203,10 @@ export default function GamePage() {
             ) : scores.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={5} className="text-center text-muted-foreground">
-                  No hay puntuaciones registradas para {selectedGame} aún.
+                  <div className="py-4">
+                    <p>No hay puntuaciones registradas para {selectedGame} aún.</p>
+                    <p className="text-sm mt-1">¡Sé el primero en jugar!</p>
+                  </div>
                 </TableCell>
               </TableRow>
             ) : (

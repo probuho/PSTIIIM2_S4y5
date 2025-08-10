@@ -1,7 +1,26 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from '@prisma/client';
+import { getConfig } from '../config/environments';
 
-const globalForPrisma = globalThis as unknown as { prisma: PrismaClient };
+// Configuración dinámica de Prisma según el entorno
+const config = getConfig();
 
-export const prisma = globalForPrisma.prisma || new PrismaClient();
+const prisma = new PrismaClient({
+  datasources: {
+    db: {
+      url: config.database.url,
+    },
+  },
+});
 
-if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
+// Middleware para logging en desarrollo
+if (process.env.NODE_ENV === 'development') {
+  prisma.$use(async (params, next) => {
+    const before = Date.now();
+    const result = await next(params);
+    const after = Date.now();
+    console.log(`🔍 Query ${params.model}.${params.action} took ${after - before}ms`);
+    return result;
+  });
+}
+
+export { prisma };

@@ -1,11 +1,17 @@
 // Configuración centralizada para las URLs de la API
-export const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://explorador-planetario-api.onrender.com';
+export const API_BASE_URL =
+  import.meta.env.VITE_API_URL ||
+  import.meta.env.VITE_BACKEND_URL ||
+  'https://explorador-planetario-api.onrender.com';
 
 // URLs específicas para diferentes servicios
 export const API_ENDPOINTS = {
   // Autenticación
   SIGN_UP: `${API_BASE_URL}/signUp`,
   SIGN_IN: `${API_BASE_URL}/signIn`,
+  AUTH_SIGNIN: `${API_BASE_URL}/auth/signin`,
+  AUTH_SIGNOUT: `${API_BASE_URL}/auth/signout`,
+  AUTH_SESSION: `${API_BASE_URL}/auth/session`,
   
   // Especies
   SPECIES: `${API_BASE_URL}/api/species`,

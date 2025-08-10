@@ -14,6 +14,7 @@ import QuizPage from "./games/quiz/quiz-page";
 import HangmanPage from "./games/hangman/hangman-page";
 import RoutesPage from "./routes/routes-page";
 import SpeciesPage from "./especies/species-page";
+import UnsplashDemo from "./UnsplashDemo";
 
 function App() {
   return (
@@ -34,6 +35,7 @@ function App() {
           <Route path="/sightings/:id" element={<SightingDetail />} />
           <Route path="/especies" element={<SpeciesPage />} />
           <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/unsplash-demo" element={<UnsplashDemo />} />
         </Routes>
       </Layout>
     </SessionProvider>

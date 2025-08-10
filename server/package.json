@@ -6,7 +6,15 @@
   "scripts": {
     "build": "rimraf dist && npx tsc",
     "start": "node dist/index.js",
-    "dev": "npm run build && concurrently \"npx tsc -w\" \"nodemon --exec ts-node src/index.ts\""
+    "dev": "cross-env NODE_ENV=development npm run build && concurrently \"npx tsc -w\" \"nodemon --exec ts-node src/index.ts\"",
+    "dev:staging": "cross-env NODE_ENV=staging npm run build && concurrently \"npx tsc -w\" \"nodemon --exec ts-node src/index.ts\"",
+    "dev:prod": "cross-env NODE_ENV=production npm run build && concurrently \"npx tsc -w\" \"nodemon --exec ts-node src/index.ts\"",
+    "seed-scores": "tsx src/seed-scores.ts",
+    "seed-scores:staging": "NODE_ENV=staging tsx src/seed-scores.ts",
+    "seed-scores:prod": "NODE_ENV=production tsx src/seed-scores.ts",
+    "seed-scores:force": "tsx src/seed-scores.ts --force",
+    "test:config": "tsx -e \"import { validateConfig } from './src/config/environments'; validateConfig();\"",
+    "setup:dev": "node setup-env.js"
   },
   "keywords": [],
   "author": "",
@@ -20,6 +28,7 @@
     "@types/leaflet": "^1.9.19",
     "@types/morgan": "^1.9.9",
     "@types/node": "^22.15.17",
+    "cross-env": "^7.0.3",
     "dotenv-cli": "^8.0.0",
     "prisma": "^6.7.0",
     "ts-node": "^10.9.2",
@@ -27,6 +36,8 @@
     "typescript": "^5.8.3"
   },
   "dependencies": {
+    "@auth/core": "^0.40.0",
+    "@auth/express": "^0.11.0",
     "@prisma/client": "^6.7.0",
     "bcryptjs": "^3.0.2",
     "body-parser": "^2.2.0",

@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { prisma } from "../lib/prisma";
 
 // Función para calcular puntuación basada en movimientos, tiempo y dificultad
-const calcularPuntuacion = (movimientos: number, tiempo: number, dificultad: string): number => {
+export const calcularPuntuacion = (movimientos: number, tiempo: number, dificultad: string): number => {
   // Factores de puntuación
   const factorMovimientos = 1000; // Puntos base por movimiento eficiente
   const factorTiempo = 50; // Puntos por segundo ahorrado
@@ -27,7 +27,7 @@ const calcularPuntuacion = (movimientos: number, tiempo: number, dificultad: str
 };
 
 // Obtener top scores para un juego específico
-const getTopScores = async (req: Request, res: Response) => {
+export const getTopScores = async (req: Request, res: Response): Promise<void> => {
   try {
     const { game } = req.params;
     const limit = parseInt(req.query.limit as string) || 10;
@@ -61,15 +61,16 @@ const getTopScores = async (req: Request, res: Response) => {
 };
 
 // Guardar puntuación de memoria
-const saveMemoryScore = async (req: Request, res: Response) => {
+export const saveMemoryScore = async (req: Request, res: Response): Promise<void> => {
   try {
     const { userId, userName, movimientos, tiempo, dificultad } = req.body;
     
     if (!userName || typeof movimientos !== "number" || typeof tiempo !== "number" || !dificultad) {
-      return res.status(400).json({ 
+      res.status(400).json({ 
         success: false, 
         error: "Datos incompletos o inválidos" 
       });
+      return;
     }
 
     // Calcular puntuación
@@ -105,15 +106,16 @@ const saveMemoryScore = async (req: Request, res: Response) => {
 };
 
 // Guardar puntuación de crucigrama
-const saveCrosswordScore = async (req: Request, res: Response) => {
+export const saveCrosswordScore = async (req: Request, res: Response): Promise<void> => {
   try {
     const { userId, userName, palabrasCompletadas, tiempo, dificultad } = req.body;
     
     if (!userName || typeof palabrasCompletadas !== "number" || typeof tiempo !== "number" || !dificultad) {
-      return res.status(400).json({ 
+      res.status(400).json({ 
         success: false, 
         error: "Datos incompletos o inválidos" 
       });
+      return;
     }
 
     // Para crucigrama, usamos palabras completadas como "movimientos"
@@ -149,7 +151,7 @@ const saveCrosswordScore = async (req: Request, res: Response) => {
 };
 
 // Obtener puntuaciones de un usuario específico
-const getUserScores = async (req: Request, res: Response) => {
+export const getUserScores = async (req: Request, res: Response): Promise<void> => {
   try {
     const { userId } = req.params;
     const { game } = req.query;
@@ -186,7 +188,7 @@ const getUserScores = async (req: Request, res: Response) => {
 };
 
 // Obtener estadísticas generales de juegos
-const getGameStats = async (req: Request, res: Response) => {
+export const getGameStats = async (req: Request, res: Response): Promise<void> => {
   try {
     const stats = await prisma.gameScore.groupBy({
       by: ['game'],
@@ -217,13 +219,4 @@ const getGameStats = async (req: Request, res: Response) => {
       error: "Error al obtener estadísticas" 
     });
   }
-};
-
-export default {
-  getTopScores,
-  saveMemoryScore,
-  saveCrosswordScore,
-  getUserScores,
-  getGameStats,
-  calcularPuntuacion // Exportamos la función para uso en tests
 };

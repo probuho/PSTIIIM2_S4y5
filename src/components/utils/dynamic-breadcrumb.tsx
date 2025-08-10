@@ -15,15 +15,16 @@ const breadcrumbTranslations: Record<string, string> = {
   games: "Juegos",
   memory: "Memoria",
   crossword: "Crucigrama",
-  "eco-explorer": "Eco Explorador",
-  "species-quiz": "Cuestionario de Especies",
-  "conservation-sim": "Simulación de Conservación",
+  quiz: "Quiz",
+  hangman: "Ahorcado",
+  routes: "Rutas",
+  especies: "Especies",
   community: "Comunidad",
   sightings: "Avistamientos",
   profile: "Perfil",
   register: "Registro",
   login: "Iniciar sesión",
-  // Agrega más según tus rutas
+  "unsplash-demo": "Demostración Unsplash",
 };
 
 function translate(segment: string) {
