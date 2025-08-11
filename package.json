@@ -6,6 +6,7 @@
   "scripts": {
     "seed": "cd server && npx dotenv-cli -e .env -- ts-node src/seed.ts",
     "dev": "vite",
+    "dev:full": "concurrently \"npm run dev\" \"cd server && npm run dev\"",
     "build": "vite build",
     "build:server": "cd server && npm run build",
     "build:client": "npm run build",
@@ -39,11 +40,13 @@
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-hook-form": "^7.56.3",
+    "react-icons": "^5.5.0",
     "react-leaflet": "^5.0.0",
     "react-router-dom": "^7.6.2",
     "sonner": "^2.0.3",
     "tailwind-merge": "^3.2.0",
     "tailwindcss": "^4.1.6",
+    "unsplash-js": "^7.0.19",
     "zod": "^3.24.4"
   },
   "devDependencies": {
@@ -54,6 +57,7 @@
     "@types/react": "^19.1.2",
     "@types/react-dom": "^19.1.2",
     "@vitejs/plugin-react": "^4.4.1",
+    "concurrently": "^9.2.0",
     "eslint": "^9.25.0",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.19",

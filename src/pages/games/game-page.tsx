@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { Trophy, Medal, Crown, User, AlertCircle, RefreshCw } from 'lucide-react';
+import { RefreshCw } from 'lucide-react';
 import { games } from "./data";
 import { useTopScores } from "@/hooks/useTopScores";
+import { EnhancedScoresTable } from "@/components/ui/enhanced-scores-table";
 
 
 
@@ -77,9 +77,20 @@ const gameDetails: Record<string, { descripcion: string; tutorial: string[]; reg
 export default function GamePage() {
   // Estado para controlar qué modal está abierto
   const [openModal, setOpenModal] = useState<string | null>(null);
-  // Estado para el juego seleccionado en el top (por defecto "Memoria")
-  const [selectedGame, setSelectedGame] = useState("Memoria");
-  const { scores, loading, error, refreshScores } = useTopScores(selectedGame, 5);
+  // Estado para el juego seleccionado en el top (por defecto "memoria")
+  const [selectedGame, setSelectedGame] = useState("memoria");
+  const { scores, loading, error, refreshScores } = useTopScores(selectedGame, 10);
+
+  // Función para mapear IDs internos a nombres de visualización
+  const getGameDisplayName = (gameId: string) => {
+    const gameMap: { [key: string]: string } = {
+      'memoria': 'Memoria',
+      'crucigrama': 'Crucigrama de identificación de especies',
+      'quiz': 'Quiz del reino animal',
+      'ahorcado': 'Ahorcado de especies animales'
+    };
+    return gameMap[gameId] || gameId;
+  };
 
   return (
     <div className="flex flex-col gap-8 p-6 max-w-5xl mx-auto">
@@ -146,16 +157,16 @@ export default function GamePage() {
       {/* Selector de juego para el top */}
       <div className="flex items-center justify-between mt-10 mb-2">
         <div className="flex items-center gap-4">
-          <Label className="text-xl">Top 5 de usuarios en:</Label>
+          <Label className="text-xl">Top 10 de usuarios en:</Label>
           <select
             className="border rounded-lg px-3 py-1 text-base"
             value={selectedGame}
             onChange={e => setSelectedGame(e.target.value)}
           >
-            <option value="Memoria">Memoria</option>
-            <option value="Crucigrama">Crucigrama</option>
-            <option value="Quiz">Quiz</option>
-            <option value="Ahorcado">Ahorcado</option>
+            <option value="memoria">Memoria</option>
+            <option value="crucigrama">Crucigrama de identificación de especies</option>
+            <option value="quiz">Quiz del reino animal</option>
+            <option value="ahorcado">Ahorcado de especies animales</option>
           </select>
         </div>
         <Button 
@@ -169,64 +180,14 @@ export default function GamePage() {
           Actualizar
         </Button>
       </div>
-      {/* Tabla de top 5 de usuarios */}
+      {/* Tabla mejorada de puntuaciones */}
       <div>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="w-12 text-center">#</TableHead>
-              <TableHead>Usuario</TableHead>
-              <TableHead>Juego</TableHead>
-              <TableHead>Puntaje</TableHead>
-              <TableHead>Fecha</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {loading ? (
-              <TableRow>
-                <TableCell colSpan={5} className="text-center">
-                  <div className="flex items-center justify-center gap-2">
-                    <RefreshCw className="w-4 h-4 animate-spin" />
-                    Cargando puntuaciones...
-                  </div>
-                </TableCell>
-              </TableRow>
-            ) : error ? (
-              <TableRow>
-                <TableCell colSpan={5} className="text-center text-red-600">
-                  <div className="flex items-center justify-center gap-2">
-                    <AlertCircle className="w-4 h-4" />
-                    {error}
-                  </div>
-                </TableCell>
-              </TableRow>
-            ) : scores.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={5} className="text-center text-muted-foreground">
-                  <div className="py-4">
-                    <p>No hay puntuaciones registradas para {selectedGame} aún.</p>
-                    <p className="text-sm mt-1">¡Sé el primero en jugar!</p>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ) : (
-              scores.map((item, idx) => (
-                <TableRow key={idx}>
-                  <TableCell className="text-center">
-                    {idx === 0 ? <Crown className="text-yellow-500 w-6 h-6 mx-auto" /> :
-                     idx === 1 ? <Medal className="text-gray-400 w-6 h-6 mx-auto" /> :
-                     idx === 2 ? <Trophy className="text-amber-700 w-6 h-6 mx-auto" /> :
-                     <User className="text-blue-400 w-5 h-5 mx-auto" />}
-                  </TableCell>
-                  <TableCell className="font-medium">{item.userName}</TableCell>
-                  <TableCell>{item.game}</TableCell>
-                  <TableCell className="font-bold text-blue-700">{item.score.toLocaleString()}</TableCell>
-                  <TableCell>{item.date}</TableCell>
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
+        <EnhancedScoresTable
+          data={scores}
+          loading={loading}
+          error={error}
+          title={`Top 10 - ${getGameDisplayName(selectedGame)}`}
+        />
       </div>
     </div>
   );

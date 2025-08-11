@@ -177,6 +177,11 @@ model GameScore {
   game      String
   score     Int
   date      DateTime @default(now())
+  // Campos adicionales para almacenar metadatos del juego
+  movimientos        Int?
+  tiempo             Int?
+  dificultad         String?
+  palabrasCompletadas Int?
 }
 
 model Species {

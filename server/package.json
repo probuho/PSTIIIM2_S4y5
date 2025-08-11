@@ -13,6 +13,10 @@
     "seed-scores:staging": "NODE_ENV=staging tsx src/seed-scores.ts",
     "seed-scores:prod": "NODE_ENV=production tsx src/seed-scores.ts",
     "seed-scores:force": "tsx src/seed-scores.ts --force",
+    "seed-db": "tsx src/scripts/seed-database.ts",
+    "seed-db:staging": "NODE_ENV=staging tsx src/scripts/seed-database.ts",
+    "seed-db:prod": "NODE_ENV=production tsx src/scripts/seed-database.ts",
+    "seed-simple": "tsx src/scripts/seed-simple.ts",
     "test:config": "tsx -e \"import { validateConfig } from './src/config/environments'; validateConfig();\"",
     "setup:dev": "node setup-env.js"
   },
@@ -30,6 +34,7 @@
     "@types/node": "^22.15.17",
     "cross-env": "^7.0.3",
     "dotenv-cli": "^8.0.0",
+    "nodemon": "^3.1.10",
     "prisma": "^6.7.0",
     "ts-node": "^10.9.2",
     "tsx": "^4.19.4",

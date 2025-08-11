@@ -26,7 +26,7 @@ export const games = [
   },
   {
     id: "quiz",
-    title: "Desafío eco explorador",
+    title: "Quiz del reino animal",
     description:
       "Pon a prueba tus conocimientos sobre el reino animal en este quiz de la naturaleza",
     icon: "🌍",
@@ -34,7 +34,7 @@ export const games = [
   },
   {
     id: "ahorcado",
-    title: "Adivina el animal",
+    title: "Ahorcado de especies animales",
     description:
       "Descubre que tan bien conoces a las criaturas que cubren este planeta adivinando la especie",
     icon: "🌱",

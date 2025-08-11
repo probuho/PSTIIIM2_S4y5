@@ -23,3 +23,8 @@ dist-ssr
 *.sln
 *.sw?
 .vercel
+
+# Credenciales y archivos sensibles
+UNSPLASH_CREDENTIALS.md
+*.env.local
+.env.production

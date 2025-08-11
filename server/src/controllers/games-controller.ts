@@ -26,21 +26,37 @@ export const calcularPuntuacion = (movimientos: number, tiempo: number, dificult
   return Math.round(puntuacion);
 };
 
+// Mapeo de nombres de juegos en español a inglés
+const GAME_NAME_MAPPING: { [key: string]: string } = {
+  'memoria': 'memory',
+  'crucigrama': 'crossword',
+  'quiz': 'quiz',
+  'adivina': 'guess',
+  'ahorcado': 'hangman'
+};
+
 // Obtener top scores para un juego específico
 export const getTopScores = async (req: Request, res: Response): Promise<void> => {
   try {
     const { game } = req.params;
     const limit = parseInt(req.query.limit as string) || 10;
 
+    // Convertir el nombre del juego a minúsculas y mapear a inglés
+    const gameKey = game.toLowerCase();
+    const dbGameName = GAME_NAME_MAPPING[gameKey] || gameKey;
+
     const scores = await prisma.gameScore.findMany({
-      where: { game },
+      where: { game: dbGameName },
       orderBy: { score: "desc" },
       take: limit,
       select: {
         userName: true,
         score: true,
         date: true,
-        game: true
+        movimientos: true,
+        tiempo: true,
+        dificultad: true,
+        palabrasCompletadas: true
       }
     });
 
@@ -48,6 +64,7 @@ export const getTopScores = async (req: Request, res: Response): Promise<void> =
       success: true,
       data: scores.map(score => ({
         ...score,
+        game: game, // Incluir el nombre del juego en español
         date: score.date.toISOString().slice(0, 10)
       }))
     });
@@ -78,9 +95,13 @@ export const saveMemoryScore = async (req: Request, res: Response): Promise<void
 
     const newScore = await prisma.gameScore.create({
       data: {
+        id: `${userId || 'guest'}-${Date.now()}`,
         userId: userId || null,
         userName,
-        game: "Memoria",
+        game: 'memory',
+        movimientos,
+        tiempo,
+        dificultad,
         score: puntuacion,
       },
     });
@@ -123,9 +144,13 @@ export const saveCrosswordScore = async (req: Request, res: Response): Promise<v
 
     const newScore = await prisma.gameScore.create({
       data: {
+        id: `${userId || 'guest'}-${Date.now()}`,
         userId: userId || null,
         userName,
-        game: "Crucigrama",
+        game: 'crossword',
+        palabrasCompletadas,
+        tiempo,
+        dificultad,
         score: puntuacion,
       },
     });
@@ -156,20 +181,75 @@ export const getUserScores = async (req: Request, res: Response): Promise<void> 
     const { userId } = req.params;
     const { game } = req.query;
 
-    const whereClause: any = { userId };
-    if (game) {
-      whereClause.game = game;
+    let scores: any[] = [];
+
+    if (!game || game === 'memoria') {
+      const memoryScores = await prisma.gameScore.findMany({
+        where: { 
+          userId,
+          game: 'memory' // Usar el nombre en inglés directamente
+        },
+        orderBy: { date: "desc" },
+        select: {
+          score: true,
+          date: true,
+          movimientos: true,
+          tiempo: true,
+          dificultad: true
+        }
+      });
+      scores.push(...memoryScores.map(score => ({
+        ...score,
+        game: 'Memoria',
+        date: score.date
+      })));
     }
 
-    const scores = await prisma.gameScore.findMany({
-      where: whereClause,
-      orderBy: { date: "desc" },
-      select: {
-        game: true,
-        score: true,
-        date: true
-      }
-    });
+    if (!game || game === 'crucigrama') {
+      const crosswordScores = await prisma.gameScore.findMany({
+        where: { 
+          userId,
+          game: 'crossword' // Usar el nombre en inglés directamente
+        },
+        orderBy: { date: "desc" },
+        select: {
+          score: true,
+          date: true,
+          palabrasCompletadas: true,
+          tiempo: true,
+          dificultad: true
+        }
+      });
+      scores.push(...crosswordScores.map(score => ({
+        ...score,
+        game: 'Crucigrama',
+        date: score.date
+      })));
+    }
+
+    if (!game || game === 'ahorcado') {
+      const hangmanScores = await prisma.gameScore.findMany({
+        where: { 
+          userId,
+          game: 'hangman' // Usar el nombre en inglés directamente
+        },
+        orderBy: { date: "desc" },
+        select: {
+          score: true,
+          date: true,
+          tiempo: true,
+          dificultad: true
+        }
+      });
+      scores.push(...hangmanScores.map(score => ({
+        ...score,
+        game: 'Ahorcado',
+        date: score.date
+      })));
+    }
+
+    // Ordenar por fecha
+    scores.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
     res.json({
       success: true,
@@ -190,27 +270,38 @@ export const getUserScores = async (req: Request, res: Response): Promise<void> 
 // Obtener estadísticas generales de juegos
 export const getGameStats = async (req: Request, res: Response): Promise<void> => {
   try {
-    const stats = await prisma.gameScore.groupBy({
-      by: ['game'],
-      _count: {
-        id: true
-      },
-      _avg: {
-        score: true
-      },
-      _max: {
-        score: true
-      }
+    // Obtener estadísticas de memoria
+    const memoryStats = await prisma.gameScore.aggregate({
+      _count: { id: true },
+      _avg: { score: true },
+      _max: { score: true }
     });
+
+    // Obtener estadísticas de crucigrama
+    const crosswordStats = await prisma.gameScore.aggregate({
+      _count: { id: true },
+      _avg: { score: true },
+      _max: { score: true }
+    });
+
+    const stats = [
+      {
+        game: 'Memoria',
+        totalJugadas: memoryStats._count.id,
+        puntuacionPromedio: Math.round(memoryStats._avg.score || 0),
+        puntuacionMaxima: memoryStats._max.score || 0
+      },
+      {
+        game: 'Crucigrama',
+        totalJugadas: crosswordStats._count.id,
+        puntuacionPromedio: Math.round(crosswordStats._avg.score || 0),
+        puntuacionMaxima: crosswordStats._max.score || 0
+      }
+    ];
 
     res.json({
       success: true,
-      data: stats.map(stat => ({
-        game: stat.game,
-        totalJugadas: stat._count.id,
-        puntuacionPromedio: Math.round(stat._avg.score || 0),
-        puntuacionMaxima: stat._max.score || 0
-      }))
+      data: stats
     });
   } catch (error) {
     console.error("Error al obtener estadísticas:", error);

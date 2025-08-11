@@ -1,7 +1,6 @@
 import Layout from "@/pages/layout";
 import { Route, Routes } from "react-router-dom";
 import HomePage from "@/pages/home/home-page";
-import AuthPage from "./login/login-page";
 import { SessionProvider } from "@/components/context/auth-context";
 import CommunityPage from "./community/community-page";
 import GamePage from "./games/game-page";
@@ -15,6 +14,10 @@ import HangmanPage from "./games/hangman/hangman-page";
 import RoutesPage from "./routes/routes-page";
 import SpeciesPage from "./especies/species-page";
 import UnsplashDemo from "./UnsplashDemo";
+// Nuevas páginas de AuthJS
+import { AuthPage } from "./auth/auth-page";
+import { RegisterPage } from "./auth/register-page";
+import { SessionStatusPage } from "./auth/session-status";
 
 function App() {
   return (
@@ -22,8 +25,10 @@ function App() {
       <Layout>
         <Routes>
           <Route path="/" element={<HomePage />} />
+          {/* Nuevas rutas de AuthJS */}
           <Route path="/login" element={<AuthPage />} />
-          <Route path="/register" element={<AuthPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+          <Route path="/session-status" element={<SessionStatusPage />} />
           <Route path="/community" element={<CommunityPage />} />
           <Route path="/games" element={<GamePage />} />
           <Route path="/games/memory" element={<MemoryPage />} />

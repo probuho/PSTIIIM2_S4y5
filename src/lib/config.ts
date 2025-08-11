@@ -2,7 +2,8 @@
 export const API_BASE_URL =
   import.meta.env.VITE_API_URL ||
   import.meta.env.VITE_BACKEND_URL ||
-  'https://explorador-planetario-api.onrender.com';
+  // En desarrollo, usar servidor local; en producción, usar Render
+  import.meta.env.DEV ? 'http://localhost:3000' : 'https://explorador-planetario-api.onrender.com';
 
 // URLs específicas para diferentes servicios
 export const API_ENDPOINTS = {

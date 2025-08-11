@@ -379,3 +379,26 @@ form {
   border-radius: inherit;
 }
 /* Puedes ajustar el border-radius si tu jumbotron es redondeado */
+
+/* Oculta las pistas automáticas del componente react-crossword */
+.react-crossword .clues,
+.react-crossword [data-testid="clues"],
+.react-crossword .crossword-clues,
+.react-crossword .puzzle-clues {
+  display: none !important;
+}
+
+/* Oculta específicamente las pistas de texto que aparecen automáticamente */
+.react-crossword .clue,
+.react-crossword .clue-text,
+.react-crossword .puzzle-clue {
+  display: none !important;
+}
+
+/* Mantiene visible el grid del crucigrama */
+.react-crossword svg,
+.react-crossword canvas,
+.react-crossword [data-testid="grid"] {
+  display: block !important;
+  visibility: visible !important;
+}

@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { useSession } from "@/components/context/auth-context";
 import { toast } from "sonner";
+import { useHybridScores } from "@/hooks/useHybridScores";
 
 //Componentes del crossword de la librería react-crossword
 import Crossword, { type CrosswordImperative, type CellInput} from '@jaredreisinger/react-crossword';
@@ -18,50 +19,34 @@ import {
   type CrosswordData
 } from "@/components/utils/CrosswordGenerator";
 
-
 //Dificultades
 const difficultyOptions = [
   { value: "easy", label: "Fácil", wordCount: 5, multiplier: 1.0, gridSize: 10 },
   { value: "medium", label: "Normal", wordCount: 10, multiplier: 1.2, gridSize: 15 },
   { value: "hard", label: "Difícil", wordCount: 15, multiplier: 1.5, gridSize: 20 },
 ];
-//Puntuacion
-type Score = {
-  date: string;
-  score: number;
-  difficulty: string;
-  user: string;
-};
-
-//Función para la fecha a utilizar en el historial
-function getNowDate() {
-  return new Date().toISOString().slice(0, 10);
-}
 
 export default function CrosswordPage() {
+  console.log("🚀 CrosswordPage: Componente iniciando...");
+  
   const { session } = useSession();
+  console.log("🔐 Session:", session);
+  
+  const { scores: topScores, loading: loadingScores, error: scoresError, saveScore, refreshScores } = useHybridScores("Crucigrama", 5);
+  console.log("📊 Scores:", { topScores, loadingScores, scoresError });
+  
   const [difficulty, setDifficulty] = useState("easy");
   const [generationResult, setGenerationResult] = useState<GeneratorResult | null>(null);
   const [currentScore, setCurrentScore] = useState(0);
   const [correctWordsGuessed, setCorrectWordsGuessed] = useState<Set<string>>(new Set());
   const [showEnd, setShowEnd] = useState(false);
-  const [scores, setScores] = useState<Score[]>([]);
   const [isGameActive, setIsGameActive] = useState(false);
+  
+  // Obtener las palabras colocadas del resultado de generación
+  const placedWords = generationResult?.placedWords || [];
+  console.log("🎯 Placed words:", placedWords);
 
   const crosswordRef = useRef<CrosswordImperative>(null);
-
-  //Configuración de la puntuación
-  useEffect(() => {
-    const key = "crossword-scores";
-    const raw = window.localStorage.getItem(key);
-    if (raw) {
-      setScores(JSON.parse(raw));
-    }
-  }, []);
-  const saveScores = useCallback((newScores: Score[]) => {
-    setScores(newScores);
-    window.localStorage.setItem("crossword-scores", JSON.stringify(newScores));
-  }, []);
 
   //Guardado en memoria de la dificultad actual
   const currentDifficultyOption = useMemo(() => {
@@ -70,34 +55,37 @@ export default function CrosswordPage() {
 
   //Configuración de nueva partida
   const startNewGame = useCallback(() => {
+    console.log("🎮 Iniciando nuevo juego con dificultad:", difficulty);
+    
     const currentDifficulty = difficultyOptions.find((opt) => opt.value === difficulty);
     if (!currentDifficulty) {
-      //console.error("Configuración de dificultad no encontrada", difficulty);
+      console.error("❌ Configuración de dificultad no encontrada", difficulty);
       return;
     }
 
     //Constantes para la generación y manipulación del crucigrama
     const wordsForGenerator: WordEntry[] = listadoPalabrasData as WordEntry[];
+    console.log("📚 Palabras disponibles:", wordsForGenerator.length);
+    
     const shuffledWords = [...wordsForGenerator].sort(() => 0.5 - Math.random());
     const selectedWords = shuffledWords.slice(0, currentDifficulty.wordCount);
+    console.log("🎯 Palabras seleccionadas:", selectedWords);
 
     let result: GeneratorResult | null = null;
     let attempts = 0;
     const MAX_GENERATION_ATTEMPTS = 10; //Limite de intentos para prevenir loops infinitos
 
     while (!result && attempts < MAX_GENERATION_ATTEMPTS) {
+      console.log(`🔄 Intento ${attempts + 1} de generación...`);
       const generator = new CrosswordGenerator(selectedWords, currentDifficulty.gridSize);
       result = generator.generate();
       attempts++;
       if (!result && attempts < MAX_GENERATION_ATTEMPTS) {
-          console.warn(`Crossword generation failed on attempt ${attempts}. Retrying...`);
+          console.warn(`⚠️ Crossword generation failed on attempt ${attempts}. Retrying...`);
       }
     }
 
-    //Console.log mensajes para testing 
-    {/*console.log("Palabras seleccionadas para generar:", selectedWords);
-    console.log("Tamaño del grid para la generación:", currentDifficulty.gridSize);
-    console.log("Resultado de generación:", result); */}
+    console.log("✅ Resultado de generación:", result);
     setGenerationResult(result);
 
     //Reinicio de los estados del juego al generar un nuevo crucigrama
@@ -109,7 +97,7 @@ export default function CrosswordPage() {
 
     //En caso de fallar la generación del crucigrama
     if (!result || !result.crosswordData || !result.crosswordData.grid) {
-      //console.error("No se pudo generar el crucigrama después de ${MAX_GENERATION_ATTEMPTS} intentos. Resultado:", result);
+      console.error("❌ No se pudo generar el crucigrama después de", MAX_GENERATION_ATTEMPTS, "intentos. Resultado:", result);
       toast.error("No se pudo generar un crucigrama con las palabras seleccionadas. Intente de nuevo.");
       setIsGameActive(false);
     }
@@ -117,43 +105,47 @@ export default function CrosswordPage() {
 
   //Efecto para comenzar un nuevo juego cuando se cambia la dificultad
   useEffect(() => {
+    console.log("🔄 useEffect: Cambio de dificultad detectado, iniciando nuevo juego...");
     startNewGame();
   }, [difficulty, startNewGame]);
 
-  // Preparación del las palabras y los datos del crucigrama para generar el resultado
-  const placedWords = useMemo(() => generationResult?.placedWords || [], [generationResult]);
-
+  // Preparación de los datos del crucigrama para generar el resultado
   const crosswordData = useMemo<CrosswordData | null>(() => { 
+    console.log("🧠 useMemo: Generando datos del crucigrama...");
     if (generationResult && generationResult.crosswordData && generationResult.crosswordData.grid) {
-      //console.log("Datos del crucigrama listo para utilizar desde el useMemo.");
+      console.log("✅ Datos del crucigrama listos:", generationResult.crosswordData);
       return generationResult.crosswordData;
     }
-    //console.log("Los datos del crucigrama no estan listos en el useMemo o estos son invalidos. El valor de estos es null");
+    console.log("❌ Los datos del crucigrama no están listos:", generationResult);
     return null;
   }, [generationResult]);
 
   //Efecto para determinar la completación del juego y guardar la puntuación
   useEffect(() => {
     if (isGameActive && placedWords.length > 0 && correctWordsGuessed.size === placedWords.length) {
-      const user = session?.user?.nickname || "Anónimo";
-      const finalScoreToSave = currentScore;
-
-      const newScore: Score = {
-        date: getNowDate(),
-        score: finalScoreToSave,
-        difficulty: currentDifficultyOption?.label || difficulty,
-        user,
-      };
-      const newScores = [newScore, ...scores];
-      saveScores(newScores);
+      console.log("🎉 ¡Juego completado! Guardando puntuación...");
+      const userName = session?.user?.nickname || session?.user?.name || "Usuario Invitado";
+      const userId = session?.user?.id;
+      
+      // Guardar puntuación usando el hook híbrido
+      saveScore({
+        userId,
+        userName,
+        game: "Crucigrama",
+        score: currentScore,
+        movimientos: correctWordsGuessed.size,
+        tiempo: 0, // El crucigrama no tiene timer por ahora
+        dificultad: difficulty
+      });
+      
       toast.success("Felicitaciones, has completado el crucigrama.");
       setShowEnd(true);
       setIsGameActive(false);
     }
-  }, [correctWordsGuessed.size, placedWords.length, difficulty, session, isGameActive, scores, saveScores, currentScore, currentDifficultyOption]);
-
+  }, [correctWordsGuessed.size, placedWords.length, difficulty, session, isGameActive, saveScore, currentScore]);
 
   const handleWordCorrect = useCallback((direction: 'across' | 'down', number: string) => {
+    console.log("✅ Palabra correcta:", { direction, number });
     const wordId = `${number}-${direction}`;
 
     if (!correctWordsGuessed.has(wordId)) {
@@ -185,13 +177,11 @@ export default function CrosswordPage() {
   //Cambio en la dificultad
   const handleDifficultyChange = (v: string) => {
     if (v) {
+      console.log("🎯 Cambiando dificultad a:", v);
       setDifficulty(v);
       setShowEnd(false);
     }
   };
-
-  //Carga de las puntuaciones
-  const displayedScores = useMemo(() => scores.slice(0, 3), [scores]);
 
   //Renderizado de las celdas del crucigrama
   const renderCustomCell = useCallback((cell: CellInput) => {
@@ -270,170 +260,310 @@ export default function CrosswordPage() {
       return null;
   }, [correctWordsGuessed, placedWords, crosswordData]);
 
+  console.log("🎨 Renderizando CrosswordPage con datos:", { crosswordData, generationResult, isGameActive });
+
   return (
-    <div className="flex flex-col md:flex-row gap-10 w-full h-[calc(100vh-64px)] p-6 max-w-[1600px] mx-auto">
-      {/* Panel izquierdo */}
-      <div className="w-full md:w-[340px] bg-white/90 rounded-2xl shadow-lg p-6 flex flex-col gap-6 mb-4 md:mb-0">
-        <Label className="text-lg mb-2">Dificultad</Label>
-        <ToggleGroup
-          type="single"
-          value={difficulty}
-          onValueChange={handleDifficultyChange}
-          className="w-full gap-4 mb-2"
-        >
-          {difficultyOptions.map((opt) => (
-            <ToggleGroupItem
-              key={opt.value}
-              value={opt.value}
-              variant={difficulty === opt.value ? "outline" : "default"}
-              size="lg"
-              className="flex-1 py-4 px-0 rounded-xl text-base shadow-sm border-2 data-[state=on]:border-blue-600 data-[state=on]:bg-blue-50"
+    <div className="space-y-8 p-6 max-w-7xl mx-auto">
+      {/* Título y descripción */}
+      <div className="text-center space-y-4">
+        <h1 className="text-4xl font-bold text-gray-900">
+          🦋 Crucigrama de Identificación de Especies
+        </h1>
+        <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+          Identifica diferentes especies de animales resolviendo este crucigrama educativo. 
+          ¡Cuanto más palabras completes, mejor puntuación obtendrás!
+        </p>
+      </div>
+
+      {/* Panel de control mejorado */}
+      <div className="bg-gradient-to-r from-green-50 to-blue-50 rounded-xl border border-green-200 p-6 shadow-lg">
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+          {/* Configuración de dificultad */}
+          <div className="space-y-4 bg-white rounded-lg p-4 shadow-sm">
+            <Label className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+              🎯 Dificultad
+            </Label>
+            <ToggleGroup
+              type="single"
+              value={difficulty}
+              onValueChange={handleDifficultyChange}
+              className="justify-start"
             >
-              {opt.label}
-            </ToggleGroupItem>
-          ))}
-        </ToggleGroup>
-
-        {/* Puntuación actual */}
-        <div>
-          <Label className="text-md">Puntuación Actual</Label>
-          <div className="flex justify-between mt-2 text-sm">
-            <span>Palabras Correctas: <span className="font-bold text-blue-700">{correctWordsGuessed.size}/{placedWords.length}</span></span>
-            <span>Puntuación: <span className="font-bold text-blue-700">{currentScore}</span></span>
-          </div>
-        </div>
-
-        {/* Historial de puntuaciones */}
-        <div className="flex-grow overflow-y-auto">
-          <Label className="text-md mb-2">Historial de Puntuaciones</Label>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Fecha</TableHead>
-                <TableHead>Usuario</TableHead>
-                <TableHead>Puntos</TableHead>
-                <TableHead>Dificultad</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {displayedScores.map((score, i) => (
-                <TableRow key={i}>
-                  <TableCell>{score.date}</TableCell>
-                  <TableCell>{score.user}</TableCell>
-                  <TableCell>{score.score}</TableCell>
-                  <TableCell>{score.difficulty}</TableCell>
-                </TableRow>
+              {difficultyOptions.map((opt) => (
+                <ToggleGroupItem
+                  key={opt.value}
+                  value={opt.value}
+                  className="px-4 py-2 data-[state=on]:bg-green-600 data-[state=on]:text-white"
+                >
+                  {opt.label}
+                </ToggleGroupItem>
               ))}
-            </TableBody>
-          </Table>
+            </ToggleGroup>
+            
+            <Button 
+              onClick={startNewGame} 
+              className="w-full py-3 bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white font-semibold shadow-md"
+            >
+              🎮 Nuevo Juego
+            </Button>
+          </div>
+
+          {/* Estadísticas del juego - Reorganizadas */}
+          <div className="xl:col-span-2 space-y-4">
+            <Label className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+              📊 Estadísticas del Juego
+            </Label>
+            <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
+              <div className="bg-white rounded-lg p-4 shadow-sm border-l-4 border-green-500">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-green-500">🎯</span>
+                  <p className="text-sm text-gray-600 font-medium">Palabras Correctas</p>
+                </div>
+                <p className="text-2xl font-bold text-green-600">{correctWordsGuessed.size}/{placedWords.length}</p>
+              </div>
+              <div className="bg-white rounded-lg p-4 shadow-sm border-l-4 border-blue-500">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-blue-500">🏆</span>
+                  <p className="text-sm text-gray-600 font-medium">Puntuación</p>
+                </div>
+                <p className="text-2xl font-bold text-blue-600">{currentScore}</p>
+              </div>
+              <div className="bg-white rounded-lg p-4 shadow-sm border-l-4 border-purple-500">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-purple-500">📈</span>
+                  <p className="text-sm text-gray-600 font-medium">Progreso</p>
+                </div>
+                <p className="text-2xl font-bold text-purple-600">
+                  {placedWords.length > 0 ? Math.round((correctWordsGuessed.size / placedWords.length) * 100) : 0}%
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Tablero del crucigrama y las pistas (lado derecho) */}
-      <div className="flex-1 flex flex-col w-full h-full overflow-y-auto">
-        {/* Título y boton de reinicio de juego */}
-        <div className="flex items-center justify-between w-full max-w-5xl mb-4 self-center md:self-auto px-6 md:px-0">
-          <Label className="text-2xl">Crucigrama de identificación de especies</Label>
-          <Button onClick={startNewGame}>Reiniciar Juego</Button>
+      {/* Tablero del crucigrama mejorado */}
+      <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-lg">
+        <div className="flex justify-center">
+          <div className="bg-gradient-to-br from-green-50 via-blue-50 to-purple-50 rounded-2xl shadow-xl p-6 w-full max-w-4xl">
+            {crosswordData ? (
+              <div style={{
+                  aspectRatio: '1 / 1',
+                  width: '100%',
+                  maxWidth: 'min(700px, 95vw)',
+              }}>
+                               <div className="react-crossword">
+                 <Crossword
+                   data={crosswordData}
+                   ref={crosswordRef}
+                   onCorrect={handleWordCorrect}
+                   theme={crosswordTheme}
+                   gridBackground='transparent'
+                   cellBorder={{ thickness: 1, color: 'black' }}
+                   use="responsive"
+                   renderCell={renderCustomCell}
+                   showPuzzle={false}
+                 />
+               </div>
+              </div>
+            ) : (
+              <div className="text-center space-y-4 py-8">
+                <div className="animate-spin w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full mx-auto"></div>
+                <p className="text-lg text-gray-500">
+                  Generando crucigrama... Si tarda mucho, intenta reiniciar o cambiar la dificultad.
+                </p>
+                <p className="text-sm text-gray-400">
+                  Estado: {generationResult ? 'Generado' : 'No generado'} | 
+                  Activo: {isGameActive ? 'Sí' : 'No'}
+                </p>
+              </div>
+            )}
+          </div>
         </div>
+      </div>
 
-        {/* Grid del crucigrama */}
-        <div className="bg-white/90 rounded-2xl shadow-lg p-6 w-full mx-auto flex justify-center items-center flex-grow-0 flex-shrink-0 mb-6">
-          {crosswordData ? (
-            <div style={{
-                aspectRatio: '1 / 1',
-                width: '100%',
-                maxWidth: 'min(700px, 95vw)',
-            }}>
-              <Crossword
-                data={crosswordData}
-                ref={crosswordRef}
-                onCorrect={handleWordCorrect}
-                theme={crosswordTheme}
-                gridBackground='transparent'
-                cellBorder={{ thickness: 1, color: 'black' }}
-                use="responsive"
-                renderCell={renderCustomCell}
-              />
+      {/* Contenedor de pistas del crucigrama */}
+      {crosswordData && (
+        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-200 p-6 shadow-lg">
+          <div className="max-w-6xl mx-auto">
+            <h3 className="text-xl font-semibold text-gray-900 mb-4 flex items-center gap-2">
+              📝 Pistas del Crucigrama
+              <span className="text-sm font-normal text-gray-600 bg-white/70 px-3 py-1 rounded-full">
+                ¡Usa estas pistas para resolver el crucigrama!
+              </span>
+            </h3>
+            <div className="grid grid-cols-2 gap-8">
+                             {/* Pistas ACROSS */}
+               <div className="bg-white rounded-lg p-4 shadow-sm border-l-4 border-blue-500">
+                 <h4 className="font-semibold text-blue-700 mb-3 flex items-center gap-2">
+                   ➡️ ACROSS (Horizontal)
+                 </h4>
+                 <div className="space-y-2">
+                   {Object.entries(crosswordData.across).map(([number, clue]) => (
+                     <div key={number} className="text-sm flex items-start gap-2">
+                       <span className="font-bold text-blue-600 min-w-[20px]">{number}:</span>
+                       <span className="text-gray-700 leading-relaxed">{clue.clue}</span>
+                     </div>
+                   ))}
+                 </div>
+               </div>
+               
+               {/* Pistas DOWN */}
+               <div className="bg-white rounded-lg p-4 shadow-sm border-l-4 border-indigo-500">
+                 <h4 className="font-semibold text-indigo-700 mb-3 flex items-center gap-2">
+                   ⬇️ DOWN (Vertical)
+                 </h4>
+                 <div className="space-y-2">
+                   {Object.entries(crosswordData.down).map(([number, clue]) => (
+                     <div key={number} className="text-sm flex items-start gap-2">
+                       <span className="font-bold text-indigo-600 min-w-[20px]">{number}:</span>
+                       <span className="text-gray-700 leading-relaxed">{clue.clue}</span>
+                     </div>
+                   ))}
+                 </div>
+               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Top puntuaciones mejorado */}
+      <div className="bg-gradient-to-r from-yellow-50 to-orange-50 rounded-xl border border-yellow-200 p-6 shadow-lg">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-2xl font-semibold text-gray-900 flex items-center gap-3">
+            🏆 Top 5 Puntuaciones
+            <span className="text-sm font-normal text-gray-600 bg-white/70 px-3 py-1 rounded-full">
+              ¡Compite por el primer lugar!
+            </span>
+          </h2>
+          <Button 
+            onClick={refreshScores} 
+            variant="outline" 
+            size="sm"
+            disabled={loadingScores}
+            className="border-yellow-300 text-yellow-700 hover:bg-yellow-50"
+          >
+            {loadingScores ? "🔄 Actualizando..." : "🔄 Actualizar"}
+          </Button>
+        </div>
+        <div className="bg-white/80 backdrop-blur-sm rounded-xl p-6 shadow-inner">
+          {loadingScores ? (
+            <div className="text-center text-gray-500 py-8">
+              <div className="animate-spin w-8 h-8 border-4 border-yellow-500 border-t-transparent rounded-full mx-auto mb-3"></div>
+              Cargando puntuaciones...
+            </div>
+          ) : scoresError ? (
+            <div className="text-center text-red-500 py-8">
+              <span className="text-2xl">❌</span>
+              <p className="mt-2">{scoresError}</p>
+            </div>
+          ) : topScores.length === 0 ? (
+            <div className="text-center text-gray-500 py-8">
+              <span className="text-4xl">🎯</span>
+              <p className="mt-2 text-lg">No hay puntuaciones aún</p>
+              <p className="text-sm">¡Sé el primero en establecer un récord!</p>
             </div>
           ) : (
-            <p className="text-center text-lg text-gray-500">
-              {/* En caso de que los datos del crucigrama fuesen nulos*/}
-              Generando crucigrama... Si tarda mucho, intenta reiniciar o cambiar la dificultad.
-            </p>
+            <div className="space-y-4">
+              {topScores.map((score, i) => (
+                <div key={i} className={`flex items-center justify-between p-4 rounded-xl border-2 transition-all duration-200 ${
+                  i === 0 ? 'bg-gradient-to-r from-yellow-100 to-yellow-200 border-yellow-300 shadow-lg' :
+                  i === 1 ? 'bg-gradient-to-r from-gray-100 to-gray-200 border-gray-300' :
+                  i === 2 ? 'bg-gradient-to-r from-orange-100 to-orange-200 border-orange-300' :
+                  'bg-white border-gray-200 hover:border-blue-300 hover:bg-blue-50'
+                }`}>
+                  <div className="flex items-center gap-4">
+                    <div className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg ${
+                      i === 0 ? 'bg-gradient-to-br from-yellow-400 to-yellow-600' : 
+                      i === 1 ? 'bg-gradient-to-br from-gray-400 to-gray-600' : 
+                      i === 2 ? 'bg-gradient-to-br from-orange-400 to-orange-600' : 
+                      'bg-gradient-to-br from-blue-400 to-blue-600'
+                    }`}>
+                      {i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : i + 1}
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <span className="font-semibold text-gray-900 text-lg">{score.userName}</span>
+                      {score.isAuthenticated ? (
+                        <span className="px-3 py-1 text-xs bg-green-100 text-green-800 rounded-full font-medium border border-green-200">
+                          ✅ Verificado
+                        </span>
+                      ) : (
+                        <span className="px-3 py-1 text-xs bg-gray-100 text-gray-600 rounded-full font-medium border border-gray-200">
+                          👤 Invitado
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <span className={`font-bold text-2xl ${
+                      i === 0 ? 'text-yellow-700' : 
+                      i === 1 ? 'text-gray-700' : 
+                      i === 2 ? 'text-orange-700' : 
+                      'text-blue-700'
+                    }`}>
+                      {score.score.toLocaleString()}
+                    </span>
+                    <div className="text-xs text-gray-500 mt-1">{new Date(score.date).toLocaleDateString()}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
           )}
         </div>
-
-        {/* Ventana de juego finalizado */}
-        {showEnd && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 p-4">
-            <div className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md flex flex-col gap-6 items-center animate-in fade-in max-h-[90vh] overflow-y-auto">
-              <h2 className="text-3xl font-bold text-center">¡Crucigrama Completado!</h2>
-              <div className="w-full bg-slate-50 rounded-xl p-4 flex flex-col items-center">
-                <span className="font-semibold text-lg mb-2">Puntuación Final</span>
-                <div className="flex justify-center gap-12 text-xl">
-                  <div>
-                    Palabras Correctas:<br />
-                    <span className="font-bold text-blue-700 text-3xl">{correctWordsGuessed.size}</span>
-                  </div>
-                  <div>
-                    Puntuación Total:<br />
-                    <span className="font-bold text-blue-700 text-3xl">{currentScore}</span>
-                  </div>
-                </div>
-              </div>
-              <div className="w-full bg-slate-50 rounded-xl p-4">
-                <span className="font-semibold text-lg block mb-2">Historial de Puntuaciones</span>
-                <div className="flex flex-col gap-2">
-                  {displayedScores.map((score, i) => (
-                    <div key={i} className="flex items-center gap-2 bg-white rounded-lg px-3 py-2 text-sm shadow border">
-                      <span className="text-xs text-muted-foreground w-24">{score.date}</span>
-                      <span className="flex-1">Puntos: <b>{score.score}</b>, Dificultad: <b>{score.difficulty}</b></span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              {/* Seleccion de dificultad para nuevo juego */}
-              <div className="w-full bg-slate-50 rounded-xl p-4 flex flex-col gap-3 items-center">
-                <span className="font-semibold text-lg">Selecciona Dificultad para jugar de nuevo</span>
-                <ToggleGroup
-                  type="single"
-                  value={difficulty}
-                  onValueChange={handleDifficultyChange}
-                  className="w-full gap-4"
-                >
-                  {difficultyOptions.map((opt) => (
-                    <ToggleGroupItem
-                      key={opt.value}
-                      value={opt.value}
-                      variant={difficulty === opt.value ? "outline" : "default"}
-                      size="lg"
-                      className="flex-1 py-3 px-0 rounded-xl text-base shadow-sm border-2 data-[state=on]:border-blue-600 data-[state=on]:bg-blue-50"
-                    >
-                      {opt.label}
-                    </ToggleGroupItem>
-                  ))}
-                </ToggleGroup>
-              </div>
-              <Button
-                className="w-full mt-2 text-lg py-6 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold"
-                onClick={() => {
-                  setShowEnd(false);
-                  startNewGame();
-                }}
-              >
-                Nueva partida
-              </Button>
-              <Button
-                className="w-full text-lg py-3 rounded-xl bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold"
-                onClick={() => setShowEnd(false)}
-              >
-                Cerrar
-              </Button>
-            </div>
-          </div>
-        )}
       </div>
+
+        {/* Modal de fin de juego mejorado */}
+        <Dialog open={showEnd} onOpenChange={setShowEnd}>
+          <DialogContent className="sm:max-w-lg">
+            <div className="text-center space-y-6">
+              <div className="space-y-3">
+                <div className="w-20 h-20 bg-gradient-to-br from-green-400 to-blue-600 rounded-full flex items-center justify-center mx-auto shadow-lg">
+                  <span className="text-4xl">🎉</span>
+                </div>
+                <h2 className="text-3xl font-bold bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
+                  ¡Crucigrama Completado!
+                </h2>
+                <p className="text-gray-600 text-lg">¡Excelente trabajo! Has identificado todas las especies.</p>
+              </div>
+              
+              <div className="bg-gradient-to-br from-green-50 to-blue-50 rounded-xl p-6 space-y-4 border border-green-200">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="bg-white rounded-lg p-3 text-center border border-green-200">
+                    <div className="text-green-500 text-sm font-medium mb-1">Palabras Correctas</div>
+                    <div className="text-2xl font-bold text-green-600">{correctWordsGuessed.size}</div>
+                  </div>
+                  <div className="bg-white rounded-lg p-3 text-center border border-blue-200">
+                    <div className="text-blue-500 text-sm font-medium mb-1">Puntuación Total</div>
+                    <div className="text-2xl font-bold text-blue-600">{currentScore}</div>
+                  </div>
+                </div>
+                <div className="bg-white rounded-lg p-3 text-center border border-purple-200">
+                  <div className="text-purple-500 text-sm font-medium mb-1">Dificultad</div>
+                  <div className="text-xl font-bold text-purple-600 capitalize">{difficulty}</div>
+                </div>
+              </div>
+              
+              <div className="flex gap-3">
+                <Button 
+                  onClick={() => setShowEnd(false)} 
+                  variant="outline" 
+                  className="flex-1 border-gray-300 hover:bg-gray-50"
+                >
+                  👀 Continuar
+                </Button>
+                <Button 
+                  onClick={() => {
+                    setShowEnd(false);
+                    startNewGame();
+                  }} 
+                  className="flex-1 bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white font-semibold shadow-md"
+                >
+                  🎮 Jugar de nuevo
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
     </div>
   );
 }
